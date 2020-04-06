@@ -1,0 +1,42 @@
+-Fixes/upgrades
+
+
+how to start program on startup
+
+
+change layout look to be more pleasing
+
+
+while deleting files and then reopening, upon reopen a higher count is
+in total by 1
+
+
+perhaps change time stamp not to military time.
+
+
+also, clear records.txt file of pic if deleted?
+
+
+potentially check if a current pic is same as previous, if so don't save it
+to save space.
+
+
+maybe clear used space in db bc when it gets big it doesnt resize
+after deletions.  maybe dividing the length of the db file and
+deleting half.
+
+
+ask...  are you sure delete all?
+
+
+icon
+
+
+consider making a db size limitation in case script left on too long.
+
+
+
+how to prevent thumbs.db from being created.
+
+
+If shots on a new day are taken date needs to be added to tab.
