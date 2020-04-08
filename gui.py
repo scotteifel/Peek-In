@@ -8,10 +8,15 @@ from app import commence_script, sort_gallery, sort_times
 from create_db import create_database
 from db_functions import (add_username, validate_login, retrieve_image,
             set_delay_time, check_time_delay, fetch_dates, delete_image,
-            delete_day, script_off, check_script, save_to_comp)
+            delete_day, script_off, check_script, save_to_comp,
+            check_user)
 
 global set_delay
 global pic_num
+global script_title
+global win_title_prefix
+
+win_title_prefix = " "
 pic_num = 1
 #pic_ext var in db_functions file and app file also. Used .jpg
 #to reduce pic size, other ext should work. Eg ".png". Need to
@@ -25,11 +30,19 @@ class Application(tk.Frame):
         super().__init__(master)
         self.master = master
         self.pack()
-        self.login()
+        self.has_account()
 
 
+    def has_account(self):
+        name = check_user()
+        if name:
+            self.login(name)
+        else:
+            self.login("None")
+            self.create_account_page()
 
-    def login(self):
+
+    def login(self,name):
         self.enter = tk.Button(self,text="Submit",command=self.check_credentials)
         self.new_account = tk.Button(self,text="Create Account",
                                       command=self.create_account_page)
@@ -37,24 +50,20 @@ class Application(tk.Frame):
                                command=self.master.destroy)
 
         self.greet = tk.Label(self,bg='lightblue')
-        self.greet["text"]="Welcome!\n Please sign in."
+        self.greet["text"]="Welcome\nEnter password."
         self.greet.pack()
-
-        self.ask_name = tk.Label(self)
-        self.ask_name["text"]="Enter Username"
 
         self.ask_pass = tk.Label(self)
         self.ask_pass["text"]="Enter Password"
 
         self.enter_name = tk.Entry(self)
-        self.enter_name.insert(0,"Scott")
+        self.enter_name.insert(0,name)
         self.enter_name.pack()
 
         self.enter_pass = tk.Entry(self,show="*")
         self.enter_pass.insert(0,"Scott1")
         self.enter_pass.pack()
 
-        self.ask_name.pack()
         self.ask_pass.pack()
         self.enter.pack()
         self.new_account.pack()
@@ -62,17 +71,40 @@ class Application(tk.Frame):
         self.clear_gallery()
 
 
+
+    def create_account_page(self, event=None):
+        self.new_account.pack_forget()
+        self.enter.pack_forget()
+        self.quit.pack_forget()
+        self.enter_name.delete(0,tk.END)
+        self.enter_pass.delete(0,tk.END)
+
+        self.ask_name = tk.Label(self)
+        self.ask_name["text"]="Enter Username"
+        self.ask_name.pack()
+
+        self.create_new_account = tk.Button(self,text="Submit",
+        command=self.create_user)
+        self.create_new_account.pack()
+        self.quit.pack()
+        self.greet['text']="Create Account."
+
+
     def check_credentials(self,event=None):
         global set_delay
+        global win_title_prefix
 
-        name = self.enter_name.get()
+        ##Setting wintitle for user-specific script recognition for end_script()
+        name = win_title_prefix = self.enter_name.get()
         pasw = self.enter_pass.get()
         answer = validate_login(name,pasw)
 
         if answer:
             set_delay = check_time_delay()
+
             self.logged_in()
             if answer[1]==1:
+                ## Var for ending crnt background process before restarting fresh.
                 end_script()
                 self.started_script()
                 print("Started Script")
@@ -82,24 +114,13 @@ class Application(tk.Frame):
             self.greet["text"]='Please enter a valid username\n or create a new one'
 
 
-    def create_account_page(self, event=None):
-        self.new_account.pack_forget()
-        self.enter.pack_forget()
-        self.quit.pack_forget()
-        # self.enter_name.delete(0,tk.END)
-        # self.enter_pass.delete(0,tk.END)
-        self.create_new_account = tk.Button(self,text="Submit",
-                                             command=self.create_user)
-        self.create_new_account.pack()
-        self.quit.pack()
-        self.greet['text']="Enter name and password."
-
-
     def create_user(self):
         global set_delay
+        global win_title_prefix
 
         name = self.enter_name.get()
         passw = self.enter_pass.get()
+        win_title_prefix = name
 
         if 3<len(passw)<16:
             response = add_username(name,passw)
@@ -116,6 +137,7 @@ class Application(tk.Frame):
 
 
     def logged_in(self):
+
         self.home_win = tk.Toplevel(self.master)
 
         self.home_win.title("Peek In main()")
@@ -134,7 +156,6 @@ class Application(tk.Frame):
         self.set_delay = tk.Button(self.home_win,text="Set Timer Delay",
                         command=self.set_timer)
         self.set_delay.pack()
-
 
         self.timer = tk.Label(self.home_win)
         self.timer.pack()
@@ -172,6 +193,11 @@ class Application(tk.Frame):
 
         self.hide_wins = tk.Button(self.home_win,text="Close Window",command=self.hide)
         self.hide_wins.pack()
+
+        self.settings = tk.Button(self.home_win,text="Settings",
+                                 command=self.settings_window)
+        self.settings.pack()
+
         self.quit_program = tk.Button(self.home_win,text="Exit Progam",fg="red",
                                command=self.exit_program)
         self.quit_program.pack()
@@ -242,6 +268,18 @@ class Application(tk.Frame):
             self.back_button.pack()
 
             pic_num=1
+
+
+    def settings_window(self):
+        self.settings_win = tk.Toplevel(self.master)
+        self.delete_account = tk.Button(self.settings_win,text="Delete account",
+                                        command=self.delete_account)
+        self.delete_account.pack()
+
+
+    def delete_account(self):
+        print("Delete account")
+
 
 
     def next_pic(self):
@@ -340,8 +378,8 @@ class Application(tk.Frame):
             pass
         else:
             self.after_cancel(routine)
-        today = commence_script()
 
+        today = commence_script()
         # set date selector to today if currently none.
         if len(self.variable.get()) == 0:
             self.variable.set(today)
@@ -349,7 +387,8 @@ class Application(tk.Frame):
 
         self.script_on.pack()
         ##  Renames title to enable subprocess to identify it.
-        self.home_win.title("Running Peek In")
+
+        self.home_win.title(win_title_prefix+" Running Peek In")
         return routine
 
 
@@ -402,19 +441,21 @@ class Application(tk.Frame):
 ###  END OF GUI CLASS ###
 
 ##  Run when program starts to prevent multiple instances appearing
-##  Also will end program if title is "Peek In" and exit button pressed
+##  If run from program button will close program.
 def end_process():
     si = subprocess.STARTUPINFO()
     si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    subprocess.call('cmd /c "taskkill /f /FI "WINDOWTITLE eq Peek In*"" /T',
-                shell=True,startupinfo=si)
+    subprocess.call('cmd /c "taskkill /f /FI "WINDOWTITLE eq Peek In*"" /T'
+                    ,shell=True,startupinfo=si)
+    # subprocess.call('cmd /c "taskkill /f /FI "WINDOWTITLE eq {usr} Peek In*"" /T'
+    #                 .format(usr=win_title_prefix),shell=True,startupinfo=si)
 
-## Ends program if script running bc title is changed to "Running Peek In"
+## Ends user-specific script running bc window title was changed to "<user> Running Peek In"
 def end_script():
     si = subprocess.STARTUPINFO()
     si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    subprocess.call('cmd /c "taskkill /f /FI "WINDOWTITLE eq Running Peek In*"" /T',
-                shell=True,startupinfo=si)
+    subprocess.call('cmd /c "taskkill /f /FI "WINDOWTITLE eq {win_title}*"" /T'
+                .format(win_title=win_title_prefix+" Running Peek In"),shell=True,startupinfo=si)
 
 ##  Closes app in task manager to both end script if running and program gui
 def end_app():

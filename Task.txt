@@ -40,3 +40,6 @@ how to prevent thumbs.db from being created.
 
 
 If shots on a new day are taken date needs to be added to tab.
+
+
+CHANGE db to have supplement table for each user with 3 infos

@@ -45,7 +45,7 @@ def sort_gallery(x):
         list1=list1+list4
     return list1
 
-#  Sort times by am pm then sort list
+#  Puts AM sorted times in list before PM sorted.
 def sort_times(y):
     list1, list2 = [], []
     for a in y:
