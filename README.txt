@@ -3,10 +3,14 @@ Peek-In
 A device monitoring app.
 
 
+This app will take a screenshot, convert it to a text file, encrypt the information,
+and save it into a database to add to the security of the information stored.
+Only a signed in user can access their screenshots.
 
 
-
-
+Disclaimer:
+I do not guarantee the security of this app.  I am not responsible for any breaches of
+information.  One must use at their own risk.
 
 
 

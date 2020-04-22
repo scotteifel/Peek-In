@@ -1,15 +1,14 @@
 import os, subprocess
 import tkinter as tk
+from tkinter import messagebox
 from pathlib import Path
 from PIL import ImageTk, Image
-
 
 from app import commence_script, sort_gallery, sort_times
 from create_db import create_database
 from db_functions import (add_username, validate_login, retrieve_image,
-            set_delay_time, check_time_delay, fetch_dates, delete_image,
-            delete_day, script_off, check_script, save_to_comp,
-            check_user)
+set_delay_time, check_time_delay, fetch_dates, delete_image,delete_day,
+script_off, check_script, save_to_comp,check_user,delete_user)
 
 global set_delay
 global pic_num
@@ -20,7 +19,7 @@ win_title_prefix = " "
 pic_num = 1
 #pic_ext var in db_functions file and app file also. Used .jpg
 #to reduce pic size, other ext should work. Eg ".png". Need to
-#change im.save(initial pic) "quality" kwarg in app.py also to modify
+#change im.save(initial pic) "quality" kwarg in app.py also if modified
 pic_ext=".jpg"
 
 
@@ -36,13 +35,13 @@ class Application(tk.Frame):
     def has_account(self):
         name = check_user()
         if name:
-            self.login(name)
+            self.login_page(name)
         else:
-            self.login("None")
+            self.login_page("None")
             self.create_account_page()
 
 
-    def login(self,name):
+    def login_page(self,name):
         self.enter = tk.Button(self,text="Submit",command=self.check_credentials)
         self.new_account = tk.Button(self,text="Create Account",
                                       command=self.create_account_page)
@@ -50,7 +49,7 @@ class Application(tk.Frame):
                                command=self.master.destroy)
 
         self.greet = tk.Label(self,bg='lightblue')
-        self.greet["text"]="Welcome\nEnter password."
+        self.greet["text"]="Welcome"
         self.greet.pack()
 
         self.ask_pass = tk.Label(self)
@@ -71,23 +70,42 @@ class Application(tk.Frame):
         self.clear_gallery()
 
 
-
     def create_account_page(self, event=None):
         self.new_account.pack_forget()
+        self.enter_name.pack_forget()
+        self.enter_pass.pack_forget()
+        self.ask_pass.pack_forget()
         self.enter.pack_forget()
         self.quit.pack_forget()
         self.enter_name.delete(0,tk.END)
         self.enter_pass.delete(0,tk.END)
+        self.greet['text']="Create Account"
+        self.enter.configure(command=self.create_user)
 
         self.ask_name = tk.Label(self)
         self.ask_name["text"]="Enter Username"
         self.ask_name.pack()
+        self.enter_name.pack()
+        self.ask_pass.pack()
+        self.enter_name.pack()
+        self.enter_pass.pack()
+        self.enter.pack()
 
-        self.create_new_account = tk.Button(self,text="Submit",
-        command=self.create_user)
-        self.create_new_account.pack()
+        self.back_to_login = tk.Button(self,text="Sign In",
+        command=self.to_login)
+        self.back_to_login.pack()
         self.quit.pack()
-        self.greet['text']="Create Account."
+
+    def to_login(self):
+        self.ask_pass.pack_forget()
+        self.back_to_login.pack_forget()
+        self.ask_name.pack_forget()
+        self.quit.pack_forget()
+        self.enter_name.pack_forget()
+        self.enter_pass.pack_forget()
+        self.greet.pack_forget()
+        self.enter.pack_forget()
+        self.login_page("")
 
 
     def check_credentials(self,event=None):
@@ -126,7 +144,6 @@ class Application(tk.Frame):
             response = add_username(name,passw)
 
             if response == True:
-                self.create_new_account.pack_forget()
                 set_delay_time(5)
                 set_delay = 5
                 self.logged_in()
@@ -140,32 +157,38 @@ class Application(tk.Frame):
 
         self.home_win = tk.Toplevel(self.master)
 
-        self.home_win.title("Peek In main()")
+        self.home_win.title("Peek In")
         self.home_win.protocol('WM_DELETE_WINDOW',self.hide)
 
-        self.home_win.geometry("380x290")
+        w_of_wind = 380
+        h_of_wind = 290
+        monitor_width = self.master.winfo_screenwidth()
+        monitor_height = self.master.winfo_screenheight()
+        x_coord = (monitor_width/2) - (w_of_wind/2)
+        y_coord = (monitor_height/2) - (h_of_wind/2)
+        self.home_win.geometry("%dx%d+%d+%d" % (w_of_wind, h_of_wind, x_coord, y_coord))
+        # self.home_win.geometry("380x290")
 
 
-        self.instruct = tk.Label(self.home_win)
-        self.instruct["text"]="\nSelect your preferences to begin program."
-        self.instruct.pack()
+        # self.instruct = tk.Label(self.home_win)
+        # self.instruct["text"]="\nSelect your preferences to begin program."
+        # self.instruct.pack()
 
-        self.enter_timer_delay = tk.Entry(self.home_win,text=set_delay,width=5)
-        self.enter_timer_delay.pack()
-
-        self.set_delay = tk.Button(self.home_win,text="Set Timer Delay",
-                        command=self.set_timer)
-        self.set_delay.pack()
+        # self.enter_timer_delay = tk.Entry(self.home_win,text=set_delay,width=5)
+        # self.enter_timer_delay.pack()
+        #
+        # self.set_delay = tk.Button(self.home_win,text="Set Timer Delay",
+        #                 command=self.set_timer)
+        # self.set_delay.pack()
 
         self.timer = tk.Label(self.home_win)
         self.timer.pack()
 
-        self.script_on = tk.Label(self.home_win)
-        self.script_on["text"]="Running"
+        # self.script_on = tk.Label(self.home_win)
+        # self.script_on["text"]="Running"
 
         self.start_script = tk.Button(self.home_win,text="Start Script",
                             command=self.started_script)
-        self.start_script.pack()
 
         dates=fetch_dates()
 
@@ -183,13 +206,14 @@ class Application(tk.Frame):
         self.image_viewer = tk.Button(self.home_win,text="View Images",
                             command=self.gallery)
         self.image_viewer.pack()
+        self.start_script.pack()
 
         self.stop_script = tk.Button(self.home_win,text="Stop",
                            command=self.stop_script)
         self.stop_script.pack()
 
         self.timer["text"]='Timer set to {amt} seconds.'.format(amt=set_delay)
-        self.enter_timer_delay.insert(0, set_delay)
+
 
         self.hide_wins = tk.Button(self.home_win,text="Close Window",command=self.hide)
         self.hide_wins.pack()
@@ -208,13 +232,22 @@ class Application(tk.Frame):
         global total
         global pic_num
         global pic_timestamps
+        ## These 3 vars used for image viewer gallery and db calls.
+
         global pictures
         ## pictures var used to organize current selectable gallery pictures.
         ## It is read from by next and previous pic btns and adjusted with delete_im
 
         ##  Checking db to see if selected date has data
         total = retrieve_image(self.variable.get())
+
         if total:
+            ##Makes sure gallery doesn't reopen when button's pressed and it's open.
+            try:
+                self.win.state()
+                return
+            except:
+                pass
 
             self.win=tk.Toplevel(self.master)
             self.win.protocol("WM_DELETE_WINDOW",self.close_gallery)
@@ -234,11 +267,9 @@ class Application(tk.Frame):
             self.next.pack()
             self.previous=tk.Button(self.win,text="Previous",command=self.previous_pic)
             self.previous.pack()
-            # self.fullscreen=tk.Button(self.win,text="Fullsize",command=self.view_fullscreen)
-            # self.fullscreen.pack()
+
             self.delete_btn=tk.Button(self.win,text="Delete Image",command=self.delete_im)
             self.delete_btn.pack()
-
 
             self.delete_day=tk.Button(self.win,text="Delete All",
                                     command=self.delete_day_all)
@@ -257,7 +288,11 @@ class Application(tk.Frame):
             cnv_w = self.img.width()
             cnv_h = cnv_w*.42
             win_width = str(cnv_w+90)+"x"+str(int(cnv_h+150))
-            self.win.geometry(win_width)
+
+            # monitor_width = self.master.winfo_screenwidth()
+            # monitor_height = self.master.winfo_screenheight()
+
+            self.win.geometry(win_width+str(50))
 
             self.pic_window = tk.Canvas(self.win,width=cnv_w,height=cnv_h)
             self.pic_window.create_image(40,40,anchor='nw',image=self.img)
@@ -272,13 +307,35 @@ class Application(tk.Frame):
 
     def settings_window(self):
         self.settings_win = tk.Toplevel(self.master)
+
+        w_of_wind = 380
+        h_of_wind = 210
+        monitor_width = self.master.winfo_screenwidth()
+        monitor_height = self.master.winfo_screenheight()
+        x_coord = (monitor_width/2) - (w_of_wind/2)
+        y_coord = (monitor_height/2) - (h_of_wind/2)+15
+
+        self.settings_win.geometry("%dx%d+%d+%d" % (w_of_wind,h_of_wind,x_coord,y_coord))
+
+        self.set_delay = tk.Button(self.settings_win,text="Set Timer Delay",
+                        command=self.set_timer)
+        self.set_delay.pack()
+
+        self.enter_timer_delay = tk.Entry(self.settings_win,text=set_delay,width=5)
+        self.enter_timer_delay.insert(0, set_delay)
+        self.enter_timer_delay.pack()
+
         self.delete_account = tk.Button(self.settings_win,text="Delete account",
                                         command=self.delete_account)
         self.delete_account.pack()
+        self.delete_database = tk.Button(self.settings_win,text="Restart Database",
+                                        command=self.delete_db)
+        self.delete_database.pack()
+        self.delete_settings_win = tk.Button(self.settings_win,text="Close",
+                                    command=self.settings_win.destroy)
+        self.delete_settings_win.pack()
 
 
-    def delete_account(self):
-        print("Delete account")
 
 
 
@@ -313,42 +370,56 @@ class Application(tk.Frame):
 
     def save_img(self):
         pic_path=self.timestamp.cget("text")
-        pic = save_to_comp(pic_path)
+        save_to_comp(pic_path)
 
 
     def delete_im(self):
         global total
         global pic_num
         global pictures
+        global pic_timestamps
 
-        delete_image(self.variable.get(),pic_num)
+        delete_image(self.timestamp.cget("text"))
 
-        if total==1:
+        if total == 1:
             self.close_gallery()
+            try:
+                self.variable.set(dates[-1])
+            except:
+                self.variable.set("---")
             return
 
+        pic_timestamps.remove(self.timestamp.cget("text"))
         if pic_num == 1:
             pictures.remove(pictures[0])
+            self.timestamp["text"]=pic_timestamps[0]
             if total == 2:
-                img=Image.open(pictures[0])
+                img = Image.open(pictures[0])
             else:
                 img = Image.open(pictures[pic_num-1])
         else:
             pictures.remove(pictures[pic_num-1])
             if pic_num == total:
-                pic_num-=1
-            path=pictures[pic_num-1]
+                pic_num -= 1
+            path = pictures[pic_num-1]
             img = Image.open(path)
+            self.timestamp["text"]=pic_timestamps[pic_num-1]
+
 
         self.img = ImageTk.PhotoImage(img)
 
         self.pic_window.create_image(40,40,anchor='nw',image=self.img)
 
-        total-=1
+        total -= 1
         self.pic_number["text"]=str(pic_num)+' of '+str(total)
 
 
     def delete_day_all(self):
+        ok = messagebox.askokcancel(
+            message="This will delete all pictures for this day, continue?")
+        if not ok:
+            return
+
         delete_day(self.variable.get())
         self.close_gallery()
         dates=fetch_dates()
@@ -357,6 +428,32 @@ class Application(tk.Frame):
             self.variable.set(dates[-1])
         except:
             self.variable.set("---")
+
+
+    def delete_account(self):
+
+        ok = messagebox.askokcancel(
+          message="This will delete user and exit program.\n         Continue?")
+
+        if not ok:
+            return
+        ## got var from hidden self.master entry box
+        delete_user(self.enter_name.get())
+        messagebox.showinfo(message=
+        "Successfully removed from database\n          Program will now close")
+        self.exit_program()
+
+
+    # def delete_db(self):
+    #
+    #     ok = messagebox.askokcancel(
+    #      message="All database information will be lost.\n         Continue?")
+    #
+    #     if not ok:
+    #         return
+    #     delete_database()
+    #     print("Self done in delete db")
+
 
 
     def set_timer(self):
@@ -383,24 +480,28 @@ class Application(tk.Frame):
         # set date selector to today if currently none.
         if len(self.variable.get()) == 0:
             self.variable.set(today)
-        routine = self.after(set_delay*1000, self.started_script)
+        routine = self.after(set_delay * 1000, self.started_script)
 
-        self.script_on.pack()
+        # self.script_on.pack()
+
         ##  Renames title to enable subprocess to identify it.
+        # self.home_win.title(win_title_prefix+" Running Peek In")
+        self.home_win.title(win_title_prefix+" Peek In (running)")
 
-        self.home_win.title(win_title_prefix+" Running Peek In")
+        dates=fetch_dates()
+        self.variable.set(dates[-1])
+
         return routine
 
 
     def stop_script(self):
-        self.home_win.title("Peek In main()")
+        self.home_win.title("Peek In")
         try:
             self.after_cancel(routine)
             self.script_on.pack_forget()
         except:
             pass
         script_off()
-        print("Script stopped.")
 
 
     def clear_gallery(self):
@@ -425,6 +526,10 @@ class Application(tk.Frame):
             pass
         print("Withdrew")
 
+    def center_gallery(self):
+        width = self.master.winfo_screenwidth()
+        height = self.master.winfo_screenheight()
+
 
     def exit_program(self):
         script_off()
@@ -432,30 +537,29 @@ class Application(tk.Frame):
         end_app()
 
 
-    ## Clears temporary gallery.
+    ## Clears temporary gallery folder of pictures.
     def close_gallery(self):
         self.clear_gallery()
         self.win.destroy()
 
 
-###  END OF GUI CLASS ###
+###  END OF CLASS ###
 
-##  Run when program starts to prevent multiple instances appearing
-##  If run from program button will close program.
+##  Run before program loads to prevent multiple instances appearing
+##  If run from inside program (tk button) it will close program.
 def end_process():
     si = subprocess.STARTUPINFO()
     si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     subprocess.call('cmd /c "taskkill /f /FI "WINDOWTITLE eq Peek In*"" /T'
                     ,shell=True,startupinfo=si)
-    # subprocess.call('cmd /c "taskkill /f /FI "WINDOWTITLE eq {usr} Peek In*"" /T'
-    #                 .format(usr=win_title_prefix),shell=True,startupinfo=si)
 
 ## Ends user-specific script running bc window title was changed to "<user> Running Peek In"
 def end_script():
     si = subprocess.STARTUPINFO()
     si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
     subprocess.call('cmd /c "taskkill /f /FI "WINDOWTITLE eq {win_title}*"" /T'
-                .format(win_title=win_title_prefix+" Running Peek In"),shell=True,startupinfo=si)
+        .format(win_title=win_title_prefix+" Peek In (running)"),shell=True,startupinfo=si)
 
 ##  Closes app in task manager to both end script if running and program gui
 def end_app():
@@ -465,11 +569,17 @@ def end_app():
 def main():
     create_database()
     root = tk.Tk()
-    root.geometry("380x210")
-    root.title("Peek In main()")
+    w_of_wind = 380
+    h_of_wind = 210
+    monitor_width = root.winfo_screenwidth()
+    monitor_height = root.winfo_screenheight()
+    x_coord = (monitor_width/2) - (w_of_wind/2)
+    y_coord = (monitor_height/2) - (h_of_wind/2)
+    root.geometry("%dx%d+%d+%d" % (w_of_wind, h_of_wind, x_coord, y_coord))
+
+    root.title("Peek In")
     app = Application(master=root)
     app.mainloop()
-
 
 
 
@@ -477,6 +587,7 @@ if __name__ == '__main__':
     end_process()
     main()
 
+
 ###  CHANGING Window titles is used in program for task manager call identification
-###  Different states will either be left or ended depending on the need.
-###  IE "Peek In"  to "Running Peek in"
+###  Different states will either be left or ended depending on function.
+###  IE "Peek In"-(Users script not running)  to "Running Peek in"-(Users script is running)

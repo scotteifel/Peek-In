@@ -59,7 +59,7 @@ def add_username(x,y):
         delay INTEGER)'''.format(info=CRNT_USR_INF))
         conn.commit()
 
-        cur.execute('''CREATE TABLE IF NOT EXISTS last_user(l_user TEXT DAFAULT Hey)''')
+        cur.execute('''CREATE TABLE IF NOT EXISTS last_user(l_user TEXT DEFAULT Hey)''')
         conn.commit()
 
         cur.execute('''INSERT INTO {tab} (username, password) VALUES (?,?)'''.format(tab=x),
@@ -169,12 +169,10 @@ def retrieve_image(day):
         temp_path = 'gallery/'
         qry = cur.execute('''SELECT data,picture FROM {tab} WHERE day=?'''.format(tab=CRNT_USR),(day,))
         info=qry.fetchall()
-        print(len(info))
 
         x=1
         times=[]
         for item in info:
-            print("Done"+str(x))
             decompressed = zlib.decompress(item[0])
             with open (temp_path + str(x)+ pic_ext, 'wb') as file:
                 file.write(fernet.decrypt(decompressed))
@@ -230,7 +228,6 @@ def script_off():
         conn.commit()
         cur.close()
         conn.close()
-        print("Script off")
 
 
 def check_time_delay():
@@ -288,15 +285,10 @@ def save_to_comp(picture):
         conn.close()
 
 
-def delete_image(day,num):
-
+def delete_image(time):
         conn = sqlite3.connect('main.db')
         cur = conn.cursor()
-        cur.execute('''SELECT picture FROM {tab} WHERE day=?'''.format(tab=CRNT_USR),(day,))
-        qry=cur.fetchall()
-
-        target=qry[num-1]
-        cur.execute('''DELETE FROM {tab} WHERE picture=?'''.format(tab=CRNT_USR), (target))
+        cur.execute('''DELETE FROM {tab} WHERE picture=?'''.format(tab=CRNT_USR),(time,))
         conn.commit()
         cur.close()
         conn.close()
@@ -307,6 +299,16 @@ def delete_day(day):
         conn = sqlite3.connect("main.db")
         cur = conn.cursor()
         cur.execute('''DELETE FROM {tab} WHERE day=?'''.format(tab=CRNT_USR), (day,))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+def delete_user(name):
+
+        conn = sqlite3.connect("main.db")
+        cur = conn.cursor()
+        cur.execute('''DROP TABLE IF EXISTS {tab}'''.format(tab=CRNT_USR))
+        cur.execute('''DELETE FROM last_user WHERE l_user = (?)''',(name,))
         conn.commit()
         cur.close()
         conn.close()

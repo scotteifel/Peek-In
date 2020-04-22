@@ -1,4 +1,4 @@
-import pyautogui, datetime
+import pyautogui, datetime, os
 from db_functions import img_to_db
 pic_ext = ".jpg"
 
@@ -9,7 +9,7 @@ def commence_script():
 
         initial_pic = "screenshot/current1"+pic_ext
         img = pyautogui.screenshot(initial_pic)
-        print("Screenshot")
+        print("Screenshot taken")
 
         ## Resizing fullscreen screenshot
         y_ratio = img.size[1]/img.size[0]
@@ -18,10 +18,16 @@ def commence_script():
         img.thumbnail((dimension_x,dimension_y))
         img.save(initial_pic,quality=90)
 
-        with open ("records.txt", 'a+') as file:
-            file.write("Date: "+today+" | Pic: "+current+"\n")
         img_to_db(current,today,initial_pic)
         return today
+
+
+# def delete_database():
+#     with open("main.db", "r+b") as file:
+#         print(len(file.read()))
+#         info = file.read()
+#         file.write(info[:20000])
+#         file.truncate(20001)
 
 ##  Gallery sorting func so pictures are viewed in order
 def sort_gallery(x):
@@ -38,11 +44,11 @@ def sort_gallery(x):
     zipped=list(zip(list1,list2,list3,list4))
     zipped.sort()
     if list2:
-        list1=list1+list2
+        list1 += list2
     if list3:
-        list1=list1+list3
+        list1 += list3
     if list4:
-        list1=list1+list4
+        list1 += list4
     return list1
 
 #  Puts AM sorted times in list before PM sorted.
@@ -56,5 +62,5 @@ def sort_times(y):
     list1.sort()
     list2.sort()
     if list2:
-        list1=list1+list2
+        list1 += list2
     return list1
