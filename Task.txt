@@ -4,8 +4,6 @@ how to start program on startup
 
 change layout look to be more pleasing
 
-potentially check if a current pic is same as previous, if so don't save it
-to save space.
 
 better sizing of gallery window is needed.
 
@@ -21,8 +19,6 @@ icon
 
 
 Donations with paypal?
-
-settings window pre entered number needs to be fixed.
 
 delete user needs to close any active scripts.  Password protect deletion?
 sign in as administrator?

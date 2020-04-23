@@ -20,13 +20,12 @@ def commence_script():
         dimension_y = dimension_x*y_ratio
         img.thumbnail((dimension_x,dimension_y))
         img.save(initial_pic,quality=90)
-        print(type(img))
-        print(img)
         with open(initial_pic, "rb") as file:
+            ## If length of bytes same as previous picture,
+            ## picture not saved bc it's same pic to save space.
             if prev_pic:
                 crnt = len(file.read())
                 if prev_pic == crnt:
-                    print("same")
                     return
             prev_pic = crnt
 

@@ -7,8 +7,11 @@ from PIL import ImageTk, Image
 from app import commence_script, sort_gallery, sort_times
 from create_db import create_database
 from db_functions import (add_username, validate_login, retrieve_image,
-set_delay_time, check_time_delay, fetch_dates, delete_image,delete_day,
-script_off, check_script, save_to_comp,check_user,delete_user)
+set_delay_time, check_time_delay, fetch_dates, delete_image, delete_day,
+script_off, check_script, save_to_comp, check_user, delete_user)
+## Styling
+from tkinter import ttk
+from ttkthemes import ThemedTk
 
 global set_delay
 global pic_num
@@ -23,7 +26,9 @@ pic_num = 1
 pic_ext=".jpg"
 
 
-class Application(tk.Frame):
+class Application(ttk.Frame):
+
+
     def __init__(self, master=None):
 
         super().__init__(master)
@@ -42,24 +47,26 @@ class Application(tk.Frame):
 
 
     def login_page(self,name):
-        self.enter = tk.Button(self,text="Submit",command=self.check_credentials)
-        self.new_account = tk.Button(self,text="Create Account",
+        self.enter = ttk.Button(self,text="Submit",command=self.check_credentials)
+        self.new_account = ttk.Button(self,text="Create Account",
                                       command=self.create_account_page)
-        self.quit = tk.Button(self,text="Exit",fg="red",
+        self.quit = ttk.Button(self,text="Exit",
                                command=self.master.destroy)
 
-        self.greet = tk.Label(self,bg='lightblue')
+        self.greet = ttk.Label(self,)
         self.greet["text"]="Welcome"
         self.greet.pack()
+        # self.change = ttk.Button(self,text='change',command=self.changer)
+        # self.change.pack()
 
-        self.ask_pass = tk.Label(self)
+        self.ask_pass = ttk.Label(self)
         self.ask_pass["text"]="Enter Password"
 
-        self.enter_name = tk.Entry(self)
+        self.enter_name = ttk.Entry(self)
         self.enter_name.insert(0,name)
         self.enter_name.pack()
 
-        self.enter_pass = tk.Entry(self,show="*")
+        self.enter_pass = ttk.Entry(self,show="*")
         self.enter_pass.insert(0,"Scott1")
         self.enter_pass.pack()
 
@@ -70,6 +77,32 @@ class Application(tk.Frame):
         self.clear_gallery()
 
 
+    # global i
+    # i=0
+    #
+    # def changer(self):
+    #     global i
+    #     pixmap_themes = [
+    #     "breeze",
+    #     "Equilux",
+    #     "ITFT1",
+    #     "arc",
+    #     "blue",
+    #     "clearlooks",
+    #     "elegance",
+    #     "kroc",
+    #     "plastik",
+    #     "radiance",
+    #     "winxpblue"
+    #     ]
+    #     s =  ttk.Style()
+    #     print(i)
+    #     s.theme_use(pixmap_themes[i])
+    #     i+=1
+
+
+
+
     def create_account_page(self, event=None):
         self.new_account.pack_forget()
         self.enter_name.pack_forget()
@@ -77,12 +110,12 @@ class Application(tk.Frame):
         self.ask_pass.pack_forget()
         self.enter.pack_forget()
         self.quit.pack_forget()
-        self.enter_name.delete(0,tk.END)
+        self.enter_name.delete(0,ttk.END)
         self.enter_pass.delete(0,tk.END)
         self.greet['text']="Create Account"
         self.enter.configure(command=self.create_user)
 
-        self.ask_name = tk.Label(self)
+        self.ask_name = ttk.Label(self)
         self.ask_name["text"]="Enter Username"
         self.ask_name.pack()
         self.enter_name.pack()
@@ -91,7 +124,7 @@ class Application(tk.Frame):
         self.enter_pass.pack()
         self.enter.pack()
 
-        self.back_to_login = tk.Button(self,text="Sign In",
+        self.back_to_login = ttk.Button(self,text="Sign In",
         command=self.to_login)
         self.back_to_login.pack()
         self.quit.pack()
@@ -159,6 +192,7 @@ class Application(tk.Frame):
 
         self.home_win.title("Peek In")
         self.home_win.protocol('WM_DELETE_WINDOW',self.hide)
+        self.home_win.resizable(False,False)
 
         w_of_wind = 380
         h_of_wind = 290
@@ -167,68 +201,62 @@ class Application(tk.Frame):
         x_coord = (monitor_width/2) - (w_of_wind/2)
         y_coord = (monitor_height/2) - (h_of_wind/2)
         self.home_win.geometry("%dx%d+%d+%d" % (w_of_wind, h_of_wind, x_coord, y_coord))
-        # self.home_win.geometry("380x290")
 
 
-        # self.instruct = tk.Label(self.home_win)
-        # self.instruct["text"]="\nSelect your preferences to begin program."
-        # self.instruct.pack()
-
-        # self.enter_timer_delay = tk.Entry(self.home_win,text=set_delay,width=5)
-        # self.enter_timer_delay.pack()
-        #
-        # self.set_delay = tk.Button(self.home_win,text="Set Timer Delay",
-        #                 command=self.set_timer)
-        # self.set_delay.pack()
-
-        self.timer = tk.Label(self.home_win)
+        self.timer = ttk.Label(self.home_win)
         self.timer.pack()
 
-        # self.script_on = tk.Label(self.home_win)
-        # self.script_on["text"]="Running"
-
-        self.start_script = tk.Button(self.home_win,text="Start Script",
+        self.start_script = ttk.Button(self.home_win,text="Start Script",
                             command=self.started_script)
 
         dates=fetch_dates()
 
         self.variable = tk.StringVar(self.home_win)
 
+        # try:
+        #     self.variable.set(dates[-1])
+        # except:
+        #     dates=["None"]
+        # #
+        self.variable.set(dates[-1])
+
+        # self.select_dates = tk.OptionMenu(self.home_win, self.variable, *dates)
+        # self.select_dates.pack()
+
+        self.select_dates = ttk.Combobox(self.home_win, width=10, textvariable=self.variable)
         try:
             self.variable.set(dates[-1])
         except:
-            dates=["None"]
-
-        self.select_dates = tk.OptionMenu(self.home_win, self.variable, *dates)
+            self.select_dates['values']=("-|-")
         self.select_dates.pack()
 
 
-        self.image_viewer = tk.Button(self.home_win,text="View Images",
-                            command=self.gallery)
+        self.image_viewer = ttk.Button(self.home_win,text="View Images",
+                            command=self.gallery_window)
         self.image_viewer.pack()
         self.start_script.pack()
 
-        self.stop_script = tk.Button(self.home_win,text="Stop",
+        self.stop_script = ttk.Button(self.home_win,text="Stop Script",
                            command=self.stop_script)
         self.stop_script.pack()
 
         self.timer["text"]='Timer set to {amt} seconds.'.format(amt=set_delay)
 
 
-        self.hide_wins = tk.Button(self.home_win,text="Close Window",command=self.hide)
+        self.hide_wins = ttk.Button(self.home_win,text="Close Window",command=self.hide)
         self.hide_wins.pack()
 
-        self.settings = tk.Button(self.home_win,text="Settings",
+        self.settings = ttk.Button(self.home_win,text="Settings",
                                  command=self.settings_window)
         self.settings.pack()
 
-        self.quit_program = tk.Button(self.home_win,text="Exit Progam",fg="red",
+        self.quit_program = ttk.Button(self.home_win,text="Exit Progam",
                                command=self.exit_program)
         self.quit_program.pack()
         self.master.withdraw()
 
 
-    def gallery(self):
+    def gallery_window(self):
         global total
         global pic_num
         global pic_timestamps
@@ -251,6 +279,7 @@ class Application(tk.Frame):
 
             self.win=tk.Toplevel(self.master)
             self.win.protocol("WM_DELETE_WINDOW",self.close_gallery)
+            # self.win.resizable(False,False)
             ## pictures & pic_stamps referenced for gallery and saving pic to comp.
             pictures = ['gallery/' + x for x in os.listdir("gallery/") if x.endswith(pic_ext)]
             pictures=sort_gallery(pictures)
@@ -259,26 +288,26 @@ class Application(tk.Frame):
             pic_timestamps = sort_times(pic_timestamps)
 
 
-            self.pic_number = tk.Label(self.win)
+            self.pic_number = ttk.Label(self.win)
             self.pic_number["text"]="1 of " + str(total)
             self.pic_number.pack()
 
-            self.next = tk.Button(self.win,text="Next",command=self.next_pic)
+            self.next = ttk.Button(self.win,text="Next",command=self.next_pic)
             self.next.pack()
-            self.previous=tk.Button(self.win,text="Previous",command=self.previous_pic)
+            self.previous=ttk.Button(self.win,text="Previous",command=self.previous_pic)
             self.previous.pack()
 
-            self.delete_btn=tk.Button(self.win,text="Delete Image",command=self.delete_im)
+            self.delete_btn=ttk.Button(self.win,text="Delete Image",command=self.delete_im)
             self.delete_btn.pack()
 
-            self.delete_day=tk.Button(self.win,text="Delete All",
+            self.delete_day=ttk.Button(self.win,text="Delete All",
                                     command=self.delete_day_all)
             self.delete_day.pack()
 
-            self.save_im=tk.Button(self.win,text="Save To Desktop",command=self.save_img)
+            self.save_im=ttk.Button(self.win,text="Save To Desktop",command=self.save_img)
             self.save_im.pack()
 
-            self.timestamp = tk.Label(self.win)
+            self.timestamp = ttk.Label(self.win)
             self.timestamp["text"]=pic_timestamps[0]
             self.timestamp.pack()
 
@@ -298,7 +327,7 @@ class Application(tk.Frame):
             self.pic_window.create_image(40,40,anchor='nw',image=self.img)
             self.pic_window.pack()
 
-            self.back_button = tk.Button(self.win,text="Close",
+            self.back_button = ttk.Button(self.win,text="Close",
                                           command=self.close_gallery)
             self.back_button.pack()
 
@@ -307,6 +336,7 @@ class Application(tk.Frame):
 
     def settings_window(self):
         self.settings_win = tk.Toplevel(self.master)
+        self.settings_win.resizable(False,False)
 
         w_of_wind = 380
         h_of_wind = 210
@@ -317,26 +347,23 @@ class Application(tk.Frame):
 
         self.settings_win.geometry("%dx%d+%d+%d" % (w_of_wind,h_of_wind,x_coord,y_coord))
 
-        self.set_delay = tk.Button(self.settings_win,text="Set Timer Delay",
+        self.set_delay = ttk.Button(self.settings_win,text="Set Timer Delay",
                         command=self.set_timer)
         self.set_delay.pack()
 
-        self.enter_timer_delay = tk.Entry(self.settings_win,text=set_delay,width=5)
+        self.enter_timer_delay = ttk.Entry(self.settings_win,text=set_delay,width=5)
         self.enter_timer_delay.insert(0, set_delay)
         self.enter_timer_delay.pack()
 
-        self.delete_account = tk.Button(self.settings_win,text="Delete account",
+        self.delete_account = ttk.Button(self.settings_win,text="Delete account",
                                         command=self.delete_account)
         self.delete_account.pack()
-        self.delete_database = tk.Button(self.settings_win,text="Restart Database",
-                                        command=self.delete_db)
-        self.delete_database.pack()
-        self.delete_settings_win = tk.Button(self.settings_win,text="Close",
+        # self.delete_database = ttk.Button(self.settings_win,text="Restart Database",
+        #                                 command=self.delete_db)
+        # self.delete_database.pack()
+        self.delete_settings_win = ttk.Button(self.settings_win,text="Close",
                                     command=self.settings_win.destroy)
         self.delete_settings_win.pack()
-
-
-
 
 
     def next_pic(self):
@@ -568,7 +595,9 @@ def end_app():
 
 def main():
     create_database()
-    root = tk.Tk()
+    # root = tk.Tk()
+    root = ThemedTk(theme="arc")
+
     w_of_wind = 380
     h_of_wind = 210
     monitor_width = root.winfo_screenwidth()
@@ -576,11 +605,11 @@ def main():
     x_coord = (monitor_width/2) - (w_of_wind/2)
     y_coord = (monitor_height/2) - (h_of_wind/2)
     root.geometry("%dx%d+%d+%d" % (w_of_wind, h_of_wind, x_coord, y_coord))
+    root.resizable(False,False)
 
     root.title("Peek In")
     app = Application(master=root)
     app.mainloop()
-
 
 
 if __name__ == '__main__':
