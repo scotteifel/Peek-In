@@ -1,8 +1,11 @@
-import pyautogui, datetime, os
+import pyautogui, datetime, os, sys, io
 from db_functions import img_to_db
 pic_ext = ".jpg"
+prev_pic = b" "
+
 
 def commence_script():
+        global prev_pic
         now  = datetime.datetime.now()
         current = now.strftime("%I:%M.%S %p")
         today = now.strftime("%m.%d.%y")
@@ -17,6 +20,16 @@ def commence_script():
         dimension_y = dimension_x*y_ratio
         img.thumbnail((dimension_x,dimension_y))
         img.save(initial_pic,quality=90)
+        print(type(img))
+        print(img)
+        with open(initial_pic, "rb") as file:
+            if prev_pic:
+                crnt = len(file.read())
+                if prev_pic == crnt:
+                    print("same")
+                    return
+            prev_pic = crnt
+
 
         img_to_db(current,today,initial_pic)
         return today
