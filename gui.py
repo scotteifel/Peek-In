@@ -33,244 +33,171 @@ class Application(ttk.Frame):
 
         super().__init__(master)
         self.master = master
-        self.pack()
         self.has_account()
 
 
-    def has_account(self):
-        name = check_user()
-        if name:
-            self.login_page(name)
-        else:
-            self.login_page("None")
-            self.create_account_page()
+    def login_window(self,name):
+        self.master.title("Peek In")
 
+        self.greet = ttk.Label(self.master)
+        self.greet["text"]="Welcome"
 
-    def login_page(self,name):
-        self.enter = ttk.Button(self,text="Submit",command=self.check_credentials)
-        self.new_account = ttk.Button(self,text="Create Account",
+        self.enter_name = ttk.Entry(self.master)
+        self.enter_name.insert(0,name)
+        self.ask_name = ttk.Label(self.master)
+        self.ask_name["text"]="Enter Username"
+        self.ask_pass = ttk.Label(self.master)
+        self.ask_pass["text"]="Enter Password"
+        self.enter_pass = ttk.Entry(self.master,show="*")
+        self.enter_pass.insert(0,"Scott1")
+
+        self.new_account = ttk.Button(self.master,text="Create Account",
                                       command=self.create_account_page)
-        self.quit = ttk.Button(self,text="Exit",
+
+        self.quit = ttk.Button(self.master,text="Exit",
                                command=self.master.destroy)
 
-        self.greet = ttk.Label(self,)
-        self.greet["text"]="Welcome"
-        self.greet.pack()
-        # self.change = ttk.Button(self,text='change',command=self.changer)
-        # self.change.pack()
+        self.enter = ttk.Button(self.master,text="Submit",command=self.check_credentials)
 
-        self.ask_pass = ttk.Label(self)
-        self.ask_pass["text"]="Enter Password"
-
-        self.enter_name = ttk.Entry(self)
-        self.enter_name.insert(0,name)
-        self.enter_name.pack()
-
-        self.enter_pass = ttk.Entry(self,show="*")
-        self.enter_pass.insert(0,"Scott1")
-        self.enter_pass.pack()
-
-        self.ask_pass.pack()
-        self.enter.pack()
-        self.new_account.pack()
-        self.quit.pack()
+                                    # w_of_wind = 370    185
+                                    # h_of_wind = 210    105
+        print("Start")
+        self.greet.place(x=160,y=5)
+        self.ask_name.place(x=60,y=32)
+        self.enter_name.place(x=150,y=30)
+        self.ask_pass.place(x=62,y=62)
+        self.enter_pass.place(x=149,y=60)
+        self.new_account.place(x=33,y=100)
+        self.quit.place(x=260,y=100)
+        self.enter.place(x=160,y=100)
         self.clear_gallery()
+        print("done")
+
+    def create_account_page(self):
+
+        self.master.withdraw()
+        self.new_user_win = tk.Toplevel(self.master)
+
+        self.new_user_win.protocol('WM_DELETE_WINDOW',end_process)
+        self.new_user_win.resizable(False,False)
+        w_of_wind = 350
+        h_of_wind = 200
+        monitor_width = self.master.winfo_screenwidth()
+        monitor_height = self.master.winfo_screenheight()
+        x_coord = (monitor_width/2) - (w_of_wind/2)
+        y_coord = (monitor_height/2) - (h_of_wind/2)
+        self.new_user_win.geometry("%dx%d+%d+%d" % (w_of_wind, h_of_wind, x_coord, y_coord))
+
+        self.greet2 = ttk.Label(self.new_user_win,text="Create A New Account",font=("Helvetica",15))
+
+        self.ask_name2 = ttk.Label(self.new_user_win)
+        self.ask_name2["text"]="Enter Username"
+        self.enter_name2 = ttk.Entry(self.new_user_win)
+
+        self.ask_pass2 = ttk.Label(self.new_user_win)
+        self.ask_pass2["text"]="Enter Password"
+        self.enter_pass2 = ttk.Entry(self.new_user_win,show="*")
+
+        self.enter2 = ttk.Button(self.new_user_win,text="Submit",command=self.create_user)
 
 
-    # global i
-    # i=0
-    #
-    # def changer(self):
-    #     global i
-    #     pixmap_themes = [
-    #     "breeze",
-    #     "Equilux",
-    #     "ITFT1",
-    #     "arc",
-    #     "blue",
-    #     "clearlooks",
-    #     "elegance",
-    #     "kroc",
-    #     "plastik",
-    #     "radiance",
-    #     "winxpblue"
-    #     ]
-    #     s =  ttk.Style()
-    #     print(i)
-    #     s.theme_use(pixmap_themes[i])
-    #     i+=1
-
-
-
-
-    def create_account_page(self, event=None):
-        self.new_account.pack_forget()
-        self.enter_name.pack_forget()
-        self.enter_pass.pack_forget()
-        self.ask_pass.pack_forget()
-        self.enter.pack_forget()
-        self.quit.pack_forget()
-        self.enter_name.delete(0,ttk.END)
-        self.enter_pass.delete(0,tk.END)
-        self.greet['text']="Create Account"
-        self.enter.configure(command=self.create_user)
-
-        self.ask_name = ttk.Label(self)
-        self.ask_name["text"]="Enter Username"
-        self.ask_name.pack()
-        self.enter_name.pack()
-        self.ask_pass.pack()
-        self.enter_name.pack()
-        self.enter_pass.pack()
-        self.enter.pack()
-
-        self.back_to_login = ttk.Button(self,text="Sign In",
+        self.back_to_login = ttk.Button(self.new_user_win,text="Sign In",
         command=self.to_login)
-        self.back_to_login.pack()
-        self.quit.pack()
+        self.quit = ttk.Button(self.new_user_win,text="Exit",
+                               command=self.master.destroy)
 
-    def to_login(self):
-        self.ask_pass.pack_forget()
-        self.back_to_login.pack_forget()
-        self.ask_name.pack_forget()
-        self.quit.pack_forget()
-        self.enter_name.pack_forget()
-        self.enter_pass.pack_forget()
-        self.greet.pack_forget()
-        self.enter.pack_forget()
-        self.login_page("")
-
-
-    def check_credentials(self,event=None):
-        global set_delay
-        global win_title_prefix
-
-        ##Setting wintitle for user-specific script recognition for end_script()
-        name = win_title_prefix = self.enter_name.get()
-        pasw = self.enter_pass.get()
-        answer = validate_login(name,pasw)
-
-        if answer:
-            set_delay = check_time_delay()
-
-            self.logged_in()
-            if answer[1]==1:
-                ## Var for ending crnt background process before restarting fresh.
-                end_script()
-                self.started_script()
-                print("Started Script")
-        elif answer == "Not answer":
-            self.greet["text"]='Incorrect Password.'
-        else:
-            self.greet["text"]='Please enter a valid username\n or create a new one'
-
-
-    def create_user(self):
-        global set_delay
-        global win_title_prefix
-
-        name = self.enter_name.get()
-        passw = self.enter_pass.get()
-        win_title_prefix = name
-
-        if 3<len(passw)<16:
-            response = add_username(name,passw)
-
-            if response == True:
-                set_delay_time(5)
-                set_delay = 5
-                self.logged_in()
-            else:
-                self.greet['text']="Username exists"
-        else:
-            self.greet["text"]="Password must be longer than 4-15 characters."
+        self.greet2.place(x=100,y=8)
+        self.ask_name2.place(x=59,y=45)
+        self.enter_name2.place(x=145,y=45)
+        self.ask_pass2.place(x=62,y=75)
+        self.enter_pass2.place(x=145,y=75)
+        self.back_to_login.place(x=30,y=115)
+        self.enter2.place(x=125,y=115)
+        self.quit.place(x=225,y=115)
 
 
     def logged_in(self):
+        print("Logged in func")
 
         self.home_win = tk.Toplevel(self.master)
 
-        self.home_win.title("Peek In")
+        self.home_win.title("Peek In logged in")
         self.home_win.protocol('WM_DELETE_WINDOW',self.hide)
         self.home_win.resizable(False,False)
 
         w_of_wind = 380
-        h_of_wind = 290
+        h_of_wind = 250
         monitor_width = self.master.winfo_screenwidth()
         monitor_height = self.master.winfo_screenheight()
         x_coord = (monitor_width/2) - (w_of_wind/2)
         y_coord = (monitor_height/2) - (h_of_wind/2)
         self.home_win.geometry("%dx%d+%d+%d" % (w_of_wind, h_of_wind, x_coord, y_coord))
 
+        self.welcome = ttk.Label(self.home_win, text="Welcome to Peek In",
+        font=("Helvetica",12))
 
-        self.timer = ttk.Label(self.home_win)
-        self.timer.pack()
-
-        self.start_script = ttk.Button(self.home_win,text="Start Script",
-                            command=self.started_script)
-
-        dates=fetch_dates()
+        self.image_viewer = ttk.Button(self.home_win,text="View Images",
+        command=self.gallery_window)
 
         self.variable = tk.StringVar(self.home_win)
+        dates=fetch_dates()
 
-        # try:
-        #     self.variable.set(dates[-1])
-        # except:
-        #     dates=["None"]
-        # #
-        self.variable.set(dates[-1])
-
-        # self.select_dates = tk.OptionMenu(self.home_win, self.variable, *dates)
-        # self.select_dates.pack()
-
-        self.select_dates = ttk.Combobox(self.home_win, width=10, textvariable=self.variable)
         try:
             self.variable.set(dates[-1])
         except:
-            self.select_dates['values']=("-|-")
-        self.select_dates.pack()
+            dates=["None"]
 
+        self.select_dates = ttk.OptionMenu(self.home_win, self.variable, *dates)
 
-        self.image_viewer = ttk.Button(self.home_win,text="View Images",
-                            command=self.gallery_window)
-        self.image_viewer.pack()
-        self.start_script.pack()
+        self.timer = ttk.Label(self.home_win)
+
+        self.start_script = ttk.Button(self.home_win,text="Start Script",
+        command=self.started_script)
 
         self.stop_script = ttk.Button(self.home_win,text="Stop Script",
-                           command=self.stop_script)
-        self.stop_script.pack()
-
+        command=self.stop_script)
+        # self.select_dates = ttk.Combobox(self.home_win, width=10, textvariable=self.variable)
+        # try:
+        #     self.variable.set(dates[-1])
+        # except:
+        #     self.select_dates['values']=("-|-")
+        # self.select_dates.grid()
         self.timer["text"]='Timer set to {amt} seconds.'.format(amt=set_delay)
 
-
         self.hide_wins = ttk.Button(self.home_win,text="Close Window",command=self.hide)
-        self.hide_wins.pack()
 
         self.settings = ttk.Button(self.home_win,text="Settings",
-                                 command=self.settings_window)
-        self.settings.pack()
+        command=self.settings_window)
 
         self.quit_program = ttk.Button(self.home_win,text="Exit Progam",
-                               command=self.exit_program)
-        self.quit_program.pack()
-        self.master.withdraw()
+        command=self.exit_program)
 
+        self.master.withdraw()
+        try:
+            self.new_user_win.state()
+        except:
+            pass
+
+        self.welcome.place(x=120,y=7)
+        self.image_viewer.place(x=150,y=35)
+        self.select_dates.place(x=155,y=70)
+        self.timer.place(x=130,y=110)
+        self.start_script.place(x=102,y=140)
+        self.stop_script.place(x=202,y=140)
+        self.hide_wins.place(x=45,y=190)
+        self.settings.place(x=158,y=190)
+        self.quit_program.place(x=258,y=190)
 
     def gallery_window(self):
         global total
         global pic_num
         global pic_timestamps
-        ## These 3 vars used for image viewer gallery and db calls.
-
         global pictures
-        ## pictures var used to organize current selectable gallery pictures.
-        ## It is read from by next and previous pic btns and adjusted with delete_im
-
-        ##  Checking db to see if selected date has data
+        ##  Check db to see if selected date exists
         total = retrieve_image(self.variable.get())
 
         if total:
-            ##Makes sure gallery doesn't reopen when button's pressed and it's open.
+            #Gallery opens only once on button click.
             try:
                 self.win.state()
                 return
@@ -279,67 +206,76 @@ class Application(ttk.Frame):
 
             self.win=tk.Toplevel(self.master)
             self.win.protocol("WM_DELETE_WINDOW",self.close_gallery)
-            # self.win.resizable(False,False)
+
             ## pictures & pic_stamps referenced for gallery and saving pic to comp.
             pictures = ['gallery/' + x for x in os.listdir("gallery/") if x.endswith(pic_ext)]
             pictures=sort_gallery(pictures)
             with open("crnt.txt") as file:
                 pic_timestamps = [line.strip() for line in file]
-            pic_timestamps = sort_times(pic_timestamps)
-
-
-            self.pic_number = ttk.Label(self.win)
-            self.pic_number["text"]="1 of " + str(total)
-            self.pic_number.pack()
-
-            self.next = ttk.Button(self.win,text="Next",command=self.next_pic)
-            self.next.pack()
-            self.previous=ttk.Button(self.win,text="Previous",command=self.previous_pic)
-            self.previous.pack()
-
-            self.delete_btn=ttk.Button(self.win,text="Delete Image",command=self.delete_im)
-            self.delete_btn.pack()
-
-            self.delete_day=ttk.Button(self.win,text="Delete All",
-                                    command=self.delete_day_all)
-            self.delete_day.pack()
-
-            self.save_im=ttk.Button(self.win,text="Save To Desktop",command=self.save_img)
-            self.save_im.pack()
+                pic_timestamps = sort_times(pic_timestamps)
 
             self.timestamp = ttk.Label(self.win)
             self.timestamp["text"]=pic_timestamps[0]
-            self.timestamp.pack()
+
+            self.pic_number = ttk.Label(self.win)
+            self.pic_number["text"]="1 of " + str(total)
+
+            self.next = ttk.Button(self.win,text="Next",command=self.next_pic)
+            self.previous=ttk.Button(self.win,text="Previous",command=self.previous_pic)
+
+            self.save_im=ttk.Button(self.win,text="Save To Desktop",command=self.save_img)
+
+            self.delete_btn=ttk.Button(self.win,text="Delete Image",command=self.delete_im)
+
+            self.delete_day=ttk.Button(self.win,text="Delete All",
+                                    command=self.delete_day_all)
+
+            self.back_button = ttk.Button(self.win,text="Close",
+                                          command=self.close_gallery)
 
             img = Image.open('gallery/1'+pic_ext)
             self.img = ImageTk.PhotoImage(img)
 
-            cnv_w = self.img.width()
-            cnv_h = cnv_w*.42
-            win_width = str(cnv_w+90)+"x"+str(int(cnv_h+150))
+            m_wd = self.master.winfo_screenwidth()
+            pic_w, pic_h = self.img.width(), self.img.height()
+            padding = (m_wd-pic_w)/2
 
-            # monitor_width = self.master.winfo_screenwidth()
-            # monitor_height = self.master.winfo_screenheight()
+            # win_size = str(cnv_w+20)+"x"+str(int(cnv_h+150))
+            self.win.geometry("%dx%d+%d+%d" % (pic_w+40,pic_h+160,padding,10))
 
-            self.win.geometry(win_width+str(50))
+            self.pic_window = tk.Canvas(self.win,width=pic_w,height=pic_h)
+            self.pic_window.create_image(10,0,anchor='nw',image=self.img)
 
-            self.pic_window = tk.Canvas(self.win,width=cnv_w,height=cnv_h)
-            self.pic_window.create_image(40,40,anchor='nw',image=self.img)
-            self.pic_window.pack()
+            centr = pic_w/2
+            self.pic_window.place(x=10,y=10)
+            self.pic_number.place(x=centr+3,y=pic_h+10)
+            self.timestamp.place(x=centr-15,y=pic_h+30)
 
-            self.back_button = ttk.Button(self.win,text="Close",
-                                          command=self.close_gallery)
-            self.back_button.pack()
+            self.previous.place(x=centr-70,y=pic_h+50)
+            self.next.place(x=centr+20,y=pic_h+50)
+
+            self.save_im.place(x=centr-143,y=pic_h+85)
+            self.delete_btn.place(x=centr-25,y=pic_h+85)
+            self.delete_day.place(x=centr+75,y=pic_h+85)
+
+            self.back_button.place(x=centr-20,y=pic_h+120)
 
             pic_num=1
 
 
     def settings_window(self):
+        ##Make sure window doesn't open twice
+        try:
+            self.settings_win.state()
+            return
+        except:
+            pass
+
         self.settings_win = tk.Toplevel(self.master)
         self.settings_win.resizable(False,False)
 
-        w_of_wind = 380
-        h_of_wind = 210
+        w_of_wind = 350
+        h_of_wind = 190
         monitor_width = self.master.winfo_screenwidth()
         monitor_height = self.master.winfo_screenheight()
         x_coord = (monitor_width/2) - (w_of_wind/2)
@@ -349,21 +285,84 @@ class Application(ttk.Frame):
 
         self.set_delay = ttk.Button(self.settings_win,text="Set Timer Delay",
                         command=self.set_timer)
-        self.set_delay.pack()
 
         self.enter_timer_delay = ttk.Entry(self.settings_win,text=set_delay,width=5)
+        self.enter_timer_delay.delete(0,tk.END)
         self.enter_timer_delay.insert(0, set_delay)
-        self.enter_timer_delay.pack()
 
         self.delete_account = ttk.Button(self.settings_win,text="Delete account",
                                         command=self.delete_account)
-        self.delete_account.pack()
         # self.delete_database = ttk.Button(self.settings_win,text="Restart Database",
         #                                 command=self.delete_db)
-        # self.delete_database.pack()
-        self.delete_settings_win = ttk.Button(self.settings_win,text="Close",
+        # self.delete_database.grid()
+        self.delete_settings_win = ttk.Button(self.settings_win,text="  Close  ",
                                     command=self.settings_win.destroy)
-        self.delete_settings_win.pack()
+
+        self.set_delay.place(x=120,y=15)
+        self.enter_timer_delay.place(x=155,y=50)
+        self.delete_account.place(x=75,y=90)
+        self.delete_settings_win.place(x=190,y=90)
+
+##  End of different windows^^
+
+    def has_account(self):
+        name = check_user()
+        if name:
+            self.login_window(name)
+        else:
+            self.create_account_page()
+
+
+    def to_login(self):
+        self.new_user_win.destroy()
+        self.master.deiconify()
+        self.login_window("")
+
+
+    def check_credentials(self,event=None):
+        global set_delay
+        global win_title_prefix
+
+        ##Setting wintitle for user-specific script recognition for end_script()
+        name = win_title_prefix = self.enter_name.get()
+        pasw = self.enter_pass.get()
+
+        answer = validate_login(name,pasw)
+        if answer:
+            set_delay = check_time_delay()
+
+            self.logged_in()
+            if answer[1]==1:
+                ## Var for ending crnt background process before restarting fresh.
+                end_script()
+                self.started_script()
+                print("Started Script")
+            elif answer == "Not answer":
+                self.greet["text"]='Incorrect Password.'
+            else:
+                self.greet["text"]='Please enter a valid username\n or create a new one'
+
+
+    def create_user(self):
+        global set_delay
+        global win_title_prefix
+
+        name = self.enter_name2.get()
+        passw = self.enter_pass2.get()
+        win_title_prefix = name
+
+        if 3<len(passw)<16:
+            response = add_username(name,passw)
+
+            if response == True:
+                set_delay_time(5)
+                set_delay = 5
+                self.logged_in()
+                self.new_user_win.destroy()
+            else:
+                self.greet['text']="Username exists"
+        else:
+            self.greet["text"]="Password must be longer than 4-15 characters."
 
 
     def next_pic(self):
@@ -482,7 +481,6 @@ class Application(ttk.Frame):
     #     print("Self done in delete db")
 
 
-
     def set_timer(self):
         global set_delay
         set_delay=int(self.enter_timer_delay.get())
@@ -509,10 +507,7 @@ class Application(ttk.Frame):
             self.variable.set(today)
         routine = self.after(set_delay * 1000, self.started_script)
 
-        # self.script_on.pack()
-
         ##  Renames title to enable subprocess to identify it.
-        # self.home_win.title(win_title_prefix+" Running Peek In")
         self.home_win.title(win_title_prefix+" Peek In (running)")
 
         dates=fetch_dates()
@@ -557,18 +552,16 @@ class Application(ttk.Frame):
         width = self.master.winfo_screenwidth()
         height = self.master.winfo_screenheight()
 
-
-    def exit_program(self):
-        script_off()
-        self.clear_gallery()
-        end_app()
-
-
     ## Clears temporary gallery folder of pictures.
     def close_gallery(self):
         self.clear_gallery()
         self.win.destroy()
 
+
+    def exit_program(self):
+        script_off()
+        self.clear_gallery()
+        end_app()
 
 ###  END OF CLASS ###
 
@@ -599,7 +592,7 @@ def main():
     root = ThemedTk(theme="arc")
 
     w_of_wind = 380
-    h_of_wind = 210
+    h_of_wind = 180
     monitor_width = root.winfo_screenwidth()
     monitor_height = root.winfo_screenheight()
     x_coord = (monitor_width/2) - (w_of_wind/2)

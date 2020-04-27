@@ -15,10 +15,16 @@ deleting half.
 consider making a db size limitation in case script left on too long.
 
 
+Add description about close window.
+
+Keep me logged in option?
+
+Recertify password
+
 icon
 
 
-Donations with paypal?
+Donations?
 
 delete user needs to close any active scripts.  Password protect deletion?
 sign in as administrator?

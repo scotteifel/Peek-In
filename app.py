@@ -23,10 +23,10 @@ def commence_script():
         with open(initial_pic, "rb") as file:
             ## If length of bytes same as previous picture,
             ## picture not saved bc it's same pic to save space.
-            if prev_pic:
-                crnt = len(file.read())
-                if prev_pic == crnt:
-                    return
+            crnt = len(file.read())
+            if prev_pic == crnt:
+                print("Same Screenshot")
+                return
             prev_pic = crnt
 
 
