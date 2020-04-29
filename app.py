@@ -1,11 +1,13 @@
 import pyautogui, datetime, os, sys, io
 from db_functions import img_to_db
+
 pic_ext = ".jpg"
 prev_pic = b" "
 
 
 def commence_script():
         global prev_pic
+
         now  = datetime.datetime.now()
         current = now.strftime("%I:%M.%S %p")
         today = now.strftime("%m.%d.%y")
@@ -29,7 +31,6 @@ def commence_script():
                 return
             prev_pic = crnt
 
-
         img_to_db(current,today,initial_pic)
         return today
 
@@ -43,6 +44,7 @@ def commence_script():
 
 ##  Gallery sorting func so pictures are viewed in order
 def sort_gallery(x):
+
     list1, list2 ,list3 ,list4 = [], [], [], []
     for a in x:
         if len(a)==13:
@@ -65,6 +67,7 @@ def sort_gallery(x):
 
 #  Puts AM sorted times in list before PM sorted.
 def sort_times(y):
+
     list1, list2 = [], []
     for a in y:
         if a[-2:] == "AM":

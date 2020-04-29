@@ -8,20 +8,22 @@ from argon2 import PasswordHasher
 global CRNT_USR
 global KEY
 global usr_info
+
 pic_ext=".jpg"
 salt=b'!}\xf2\xfe\xfe \xea\xed\xbe\xdaWF\xa39\xadL'
 
 ph =PasswordHasher()
 
 
-def check_user():
+def find_last_user():
+
         conn = sqlite3.connect("main.db")
         cur = conn.cursor()
         try:
             cur.execute('''SELECT l_user FROM last_user''')
             name = cur.fetchall()[0]
         except:
-            name = None
+            return
         cur.close()
         conn.close()
         return name
@@ -89,6 +91,7 @@ def validate_login(name,pasw):
         global CRNT_USR
         global KEY
         global CRNT_USR_INF
+
         conn = sqlite3.connect("main.db")
         cur = conn.cursor()
 
@@ -99,7 +102,7 @@ def validate_login(name,pasw):
         if not name_info:
             cur.close()
             conn.close()
-            return
+            return "Not found", 0
 
         CRNT_USR = name_info[0]
         CRNT_USR_INF = CRNT_USR + "_info"
@@ -111,7 +114,7 @@ def validate_login(name,pasw):
         try:
             ph.verify(passw_info, pasw)
         except:
-            return "Not answer"
+            return "Pass incorrect", 0
 
         password = pasw.encode()
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32,
@@ -135,6 +138,7 @@ def validate_login(name,pasw):
 
 
 def img_to_db(current,date,initial_pic):
+
         fernet = Fernet(KEY)
 
         ##  Encryption before compression yields smaller file than vise versa
@@ -161,6 +165,7 @@ def img_to_db(current,date,initial_pic):
 
 
 def retrieve_image(day):
+
         fernet = Fernet(KEY)
 
         conn = sqlite3.connect("main.db")
@@ -207,21 +212,21 @@ def fetch_dates():
         return dates
 
 
-
-
 def check_script():
+
         try:
             conn = sqlite3.connect("main.db")
             cur = conn.cursor()
             cur.execute('''SELECT script_state FROM {info}'''.format(info=CRNT_USR_INF))
-            name_info = cur.fetchone()[0]
+            script_info = cur.fetchone()[0]
             cur.close()
             conn.close()
-            return name_info
+            return script_info
         except:
-            return 0
+            return
 
 def script_off():
+
         conn = sqlite3.connect("main.db")
         cur=conn.cursor()
         cur.execute('''UPDATE {info} SET script_state = 0'''.format(info=CRNT_USR_INF))
@@ -253,6 +258,7 @@ def set_delay_time(delay):
         conn.close()
 
 def save_to_comp(picture):
+
         fernet=Fernet(KEY)
 
         conn = sqlite3.connect('main.db')
@@ -286,6 +292,7 @@ def save_to_comp(picture):
 
 
 def delete_image(time):
+
         conn = sqlite3.connect('main.db')
         cur = conn.cursor()
         cur.execute('''DELETE FROM {tab} WHERE picture=?'''.format(tab=CRNT_USR),(time,))

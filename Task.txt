@@ -2,8 +2,6 @@
 
 how to start program on startup
 
-change layout look to be more pleasing
-
 
 better sizing of gallery window is needed.
 
@@ -15,16 +13,13 @@ deleting half.
 consider making a db size limitation in case script left on too long.
 
 
-Add description about close window.
-
 Keep me logged in option?
 
-Recertify password
 
 icon
 
 
 Donations?
 
-delete user needs to close any active scripts.  Password protect deletion?
-sign in as administrator?
+
+Password protect deletion?  sign in as administrator?
