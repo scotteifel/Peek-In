@@ -2,24 +2,18 @@
 
 how to start program on startup
 
-
-better sizing of gallery window is needed.
-
-maybe clear used space in db bc when it gets big it doesnt resize
-after deletions.  maybe dividing the length of the db file and
-deleting half.
-
-
-consider making a db size limitation in case script left on too long.
-
-
-Keep me logged in option?
-
-
 icon
-
 
 Donations?
 
+Check how new dates are shown, newest first.
+also if script runs must update.
 
-Password protect deletion?  sign in as administrator?
+make desktop save to folder name better
+
+fix time delay to be longer.
+
+make user name str()?
+
+
+log when program is turned on and off.

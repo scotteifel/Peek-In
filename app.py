@@ -35,14 +35,7 @@ def commence_script():
         return today
 
 
-# def delete_database():
-#     with open("main.db", "r+b") as file:
-#         print(len(file.read()))
-#         info = file.read()
-#         file.write(info[:20000])
-#         file.truncate(20001)
-
-##  Gallery sorting func so pictures are viewed in order
+##  Gallery sorting func to put pictures in order
 def sort_gallery(x):
 
     list1, list2 ,list3 ,list4 = [], [], [], []

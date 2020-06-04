@@ -7,12 +7,10 @@ from argon2 import PasswordHasher
 
 global CRNT_USR
 global KEY
-global usr_info
 
-pic_ext=".jpg"
-salt=b'!}\xf2\xfe\xfe \xea\xed\xbe\xdaWF\xa39\xadL'
-
-ph =PasswordHasher()
+pic_ext = ".jpg"
+salt = b'!}\xf2\xfe\xfe \xea\xed\xbe\xdaWF\xa39\xadL'
+ph = PasswordHasher()
 
 
 def find_last_user():
@@ -21,12 +19,77 @@ def find_last_user():
         cur = conn.cursor()
         try:
             cur.execute('''SELECT l_user FROM last_user''')
-            name = cur.fetchall()[0]
+            user = cur.fetchone()[0]
+
+            ##Checking if autologin set to 1 (which is True)
+            cur.execute('''SELECT login_state FROM last_user''')
+            x = cur.fetchone()[0]
+            if x == 1:
+                cur.execute('''SELECT l_user_key FROM last_user''')
+                x = cur.fetchone()[0]
+
+            cur.close()
+            conn.close()
+            return user, x
+
         except:
+            cur.close()
+            conn.close()
             return
+
+
+def db_auto_login(name,key):
+        global CRNT_USR
+        global CRNT_USR_INF
+        global KEY
+
+        CRNT_USR = name
+        CRNT_USR_INF = CRNT_USR+"_info"
+        KEY = key
+
+        conn = sqlite3.connect('main.db')
+        cur = conn.cursor()
+        cur.execute('''SELECT script_state FROM {tab}'''
+                    .format(tab=CRNT_USR_INF))
+        qry = cur.fetchone()[0]
         cur.close()
         conn.close()
-        return name
+
+
+def manage_auto_login(x):
+
+        conn = sqlite3.connect('main.db')
+        cur = conn.cursor()
+
+        if x == 0:
+            cur.execute('''UPDATE last_user SET l_user_key = (?)'''
+            ,(KEY,))
+            conn.commit()
+            cur.execute('''UPDATE last_user SET login_state = 1''')
+            conn.commit()
+            cur.close()
+            conn.close()
+            return
+
+        ##  Replaces any previously stored key.
+        cur.execute('''UPDATE last_user SET l_user_key = (?)''',(b' ',))
+        conn.commit()
+
+        cur.execute('''UPDATE last_user SET login_state = 0''')
+        conn.commit()
+        cur.close()
+        conn.close()
+
+
+def check_auto_login():
+
+        conn = sqlite3.connect('main.db')
+        cur = conn.cursor()
+        cur.execute('''SELECT login_state FROM last_user''')
+        l_state = cur.fetchone()[0]
+        cur.close()
+        conn.close()
+        return l_state
 
 
 def add_username(x,y):
@@ -37,7 +100,8 @@ def add_username(x,y):
         conn = sqlite3.connect("main.db")
         cur = conn.cursor()
 
-        cur.execute('''SELECT name FROM sqlite_master WHERE type="table" AND name="{tab}"'''.format(tab=x))
+        cur.execute('''SELECT name FROM sqlite_master WHERE
+                        type="table" AND name="{tab}"'''.format(tab=x))
         name_info = (cur.fetchone())
 
         if name_info:
@@ -48,8 +112,8 @@ def add_username(x,y):
         hash = ph.hash(y)
         password = y.encode()
 
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32,
-                            salt=salt, iterations=100000, backend=default_backend())
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32,salt=salt,
+                            iterations=100000, backend=default_backend())
         KEY=base64.urlsafe_b64encode(kdf.derive(password))
         CRNT_USR = x
         CRNT_USR_INF = x + "_info"
@@ -61,29 +125,28 @@ def add_username(x,y):
         delay INTEGER)'''.format(info=CRNT_USR_INF))
         conn.commit()
 
-        cur.execute('''CREATE TABLE IF NOT EXISTS last_user(l_user TEXT DEFAULT Hey)''')
+        cur.execute('''CREATE TABLE IF NOT EXISTS last_user(l_user TEXT
+            DEFAULT " " NOT NULL, l_user_key BLOB DEFAULT "b''" NOT NULL,
+            login_state INTEGER  DEFAULT "0" NOT NULL)''')
         conn.commit()
 
-        cur.execute('''INSERT INTO {tab} (username, password) VALUES (?,?)'''.format(tab=x),
-        (x,hash))
+        cur.execute('''INSERT INTO {tab} (username, password) VALUES (?,?)'''
+                       .format(tab=x), (x,hash))
         conn.commit()
 
-        cur.execute('''INSERT INTO {info} (script_state, delay) VALUES (?,?)'''.format(info=CRNT_USR_INF),(0,5))
+        cur.execute('''INSERT INTO {info} (script_state, delay) VALUES (?,?)'''
+                       .format(info=CRNT_USR_INF),(0,5))
         conn.commit()
 
-        ##Checking for autocomplete in login screen.  Func is has_account() in gui file
-        cur.execute('''SELECT * FROM last_user''')
-        try:
-            results = cur.fetchall()[0]
-            cur.execute('''UPDATE last_user SET l_user = (?) WHERE l_user = (?)''',(CRNT_USR,results[0]))
-        except:
-            cur.execute('''INSERT INTO last_user (l_user) VALUES (?)''',(CRNT_USR,))
+        cur.execute('''UPDATE last_user SET l_user = (?)''',(CRNT_USR,))
+        conn.commit()
 
+        cur.execute('''INSERT INTO last_user (l_user) VALUES (?)''',
+                                                        (CRNT_USR,))
         conn.commit()
 
         cur.close()
         conn.close()
-
         return True
 
 
@@ -95,46 +158,37 @@ def validate_login(name,pasw):
         conn = sqlite3.connect("main.db")
         cur = conn.cursor()
 
-        cur.execute('''SELECT name FROM sqlite_master WHERE type="table" AND name="{tab}"'''
-                    .format(tab=name))
+        cur.execute('''SELECT name FROM sqlite_master WHERE type="table"
+                     AND name="{tab}"'''.format(tab=name))
         name_info = (cur.fetchone())
 
         if not name_info:
             cur.close()
             conn.close()
-            return "Not found", 0
+            return "Not found"
 
         CRNT_USR = name_info[0]
         CRNT_USR_INF = CRNT_USR + "_info"
 
-        cur.execute('''SELECT password FROM {tab} WHERE username = (?)'''.format(tab=name),
-            (name,))
+        cur.execute('''SELECT password FROM {tab} WHERE username = (?)'''
+                        .format(tab=name),(name,))
         passw_info = cur.fetchone()[0]
 
         try:
             ph.verify(passw_info, pasw)
         except:
-            return "Pass incorrect", 0
+            return "Pass incorrect"
 
         password = pasw.encode()
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32,
         salt=salt, iterations=100000, backend=default_backend())
         KEY = base64.urlsafe_b64encode(kdf.derive(password))
 
-
-        cur.execute('''SELECT script_state FROM {info}'''.format(info=CRNT_USR_INF))
-        script_state= cur.fetchone()[0]
-        conn.commit()
-
         #Updating to autofill last user in login screen
         cur.execute('''UPDATE last_user SET l_user = (?)''',(name,))
         conn.commit()
-
         cur.close()
         conn.close()
-
-        return True, script_state
-
 
 
 def img_to_db(current,date,initial_pic):
@@ -145,7 +199,6 @@ def img_to_db(current,date,initial_pic):
         with open(initial_pic, "rb") as f:
             data_encrypt1=fernet.encrypt(f.read())
             data=zlib.compress(data_encrypt1,4)
-
         os.remove(initial_pic)
         try:
             os.remove("screenshot/Thumbs.db")
@@ -157,7 +210,8 @@ def img_to_db(current,date,initial_pic):
         cur.execute('''INSERT INTO {tab} (picture,day,data) VALUES (?,?,?)'''
                     .format(tab=CRNT_USR),(current,date,data))
         conn.commit()
-        cur.execute('''UPDATE {info} SET script_state = 1'''.format(info=CRNT_USR_INF))
+        cur.execute('''UPDATE {info} SET script_state = 1'''
+                     .format(info=CRNT_USR_INF))
 
         conn.commit()
         cur.close()
@@ -172,20 +226,22 @@ def retrieve_image(day):
         cur=conn.cursor()
 
         temp_path = 'gallery/'
-        qry = cur.execute('''SELECT data,picture FROM {tab} WHERE day=?'''.format(tab=CRNT_USR),(day,))
+        qry = cur.execute('''SELECT data,picture FROM {tab} WHERE day=?'''
+                           .format(tab=CRNT_USR),(day,))
+
         info=qry.fetchall()
 
         x=1
         times=[]
         for item in info:
             decompressed = zlib.decompress(item[0])
-            with open (temp_path + str(x)+ pic_ext, 'wb') as file:
+            with open(temp_path + str(x) + pic_ext, 'wb') as file:
                 file.write(fernet.decrypt(decompressed))
                 times.append(item[1])
                 x+=1
-                with open("crnt.txt", "w") as file:
-                    for item in times:
-                        file.write(item+"\n")
+            with open("crnt.txt", "w") as file:
+                for item in times:
+                    file.write(item+"\n")
 
         cur.close()
         conn.close()
@@ -217,7 +273,8 @@ def check_script():
         try:
             conn = sqlite3.connect("main.db")
             cur = conn.cursor()
-            cur.execute('''SELECT script_state FROM {info}'''.format(info=CRNT_USR_INF))
+            cur.execute('''SELECT script_state FROM {info}'''
+                         .format(info=CRNT_USR_INF))
             script_info = cur.fetchone()[0]
             cur.close()
             conn.close()
@@ -225,11 +282,13 @@ def check_script():
         except:
             return
 
+
 def script_off():
 
         conn = sqlite3.connect("main.db")
         cur=conn.cursor()
-        cur.execute('''UPDATE {info} SET script_state = 0'''.format(info=CRNT_USR_INF))
+        cur.execute('''UPDATE {info} SET script_state = 0'''
+                       .format(info=CRNT_USR_INF))
         conn.commit()
         cur.close()
         conn.close()
@@ -252,7 +311,8 @@ def set_delay_time(delay):
 
         conn = sqlite3.connect("main.db")
         cur = conn.cursor()
-        cur.execute('''UPDATE {info} SET delay = (?)'''.format(info=CRNT_USR_INF), (delay,))
+        cur.execute('''UPDATE {info} SET delay = (?)'''
+                       .format(info=CRNT_USR_INF), (delay,))
         conn.commit()
         cur.close()
         conn.close()
@@ -263,16 +323,19 @@ def save_to_comp(picture):
 
         conn = sqlite3.connect('main.db')
         cur = conn.cursor()
-        cur.execute('''SELECT data,day FROM {tab} WHERE picture=?'''.format(tab=CRNT_USR),(picture,))
+        cur.execute('''SELECT data,day FROM {tab} WHERE picture=?'''
+                       .format(tab=CRNT_USR),(picture,))
         qry = cur.fetchall()[0]
 
         desktop_path=os.path.expanduser("~/Desktop")
-        ##Symbols reformatted to prep for saving to desktop.
+        ##Symbols reformatted to prepare file for save to desktop.
         desktop_path=desktop_path.replace("\\","/")
-        picture=picture.replace(":","h-").replace(".","min-").replace(" ","s-")+pic_ext
+        picture = picture.replace(":","h`").replace(".","min`")
+        picture = picture.replace(" ","s-")+pic_ext
 
-        desktop_path+="/pics"
-        #Specific folder within "pics" folder for each day with qry 1 result
+        desktop_path+="/PeekIn"
+        #Specific "day" folder within desktop picture folder
+        #created with qry 1 result
         day_folder=desktop_path+"/"+qry[1]
         pic_filepath = day_folder+"/"+picture
         try:
@@ -295,7 +358,8 @@ def delete_image(time):
 
         conn = sqlite3.connect('main.db')
         cur = conn.cursor()
-        cur.execute('''DELETE FROM {tab} WHERE picture=?'''.format(tab=CRNT_USR),(time,))
+        cur.execute('''DELETE FROM {tab} WHERE picture=?'''
+                     .format(tab=CRNT_USR),(time,))
         conn.commit()
         cur.close()
         conn.close()
@@ -305,10 +369,12 @@ def delete_day(day):
 
         conn = sqlite3.connect("main.db")
         cur = conn.cursor()
-        cur.execute('''DELETE FROM {tab} WHERE day=?'''.format(tab=CRNT_USR), (day,))
+        cur.execute('''DELETE FROM {tab} WHERE day=?'''
+                     .format(tab=CRNT_USR), (day,))
         conn.commit()
         cur.close()
         conn.close()
+
 
 def delete_user(name):
 
@@ -316,6 +382,7 @@ def delete_user(name):
         cur = conn.cursor()
         cur.execute('''DROP TABLE IF EXISTS {tab}'''.format(tab=CRNT_USR))
         cur.execute('''DELETE FROM last_user WHERE l_user = (?)''',(name,))
+        cur.execute('''UPDATE last_user SET l_user = (?)''',(" ",))
         conn.commit()
         cur.close()
         conn.close()
