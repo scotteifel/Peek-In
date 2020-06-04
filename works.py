@@ -1,6 +1,3 @@
-import os
-
-print("hey  ", os.path.basename("Peek"))
 
 
 # def script_state():
