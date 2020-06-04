@@ -7,10 +7,12 @@ from argon2 import PasswordHasher
 
 global CRNT_USR
 global KEY
+global usr_info
 
-pic_ext = ".jpg"
-salt = b'!}\xf2\xfe\xfe \xea\xed\xbe\xdaWF\xa39\xadL'
-ph = PasswordHasher()
+pic_ext=".jpg"
+salt=b'!}\xf2\xfe\xfe \xea\xed\xbe\xdaWF\xa39\xadL'
+
+ph =PasswordHasher()
 
 
 def find_last_user():
