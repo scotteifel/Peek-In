@@ -1,13 +1,12 @@
+## If needed code.
 
+##code to check tasks in task manager.  Finds peek in program
 # def script_state():
-#     print("Starting script state")
-#     # print("script_state")
 #     # count=0
 #     # r = os.popen('tasklist /v').read().strip().split('\n')
 #     # print('# of tasks is {num}'.format(num=len(r)))
 #     # if 'Peek In' in r:
-#     #     print("Trueeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
-#     # print("Done with if statement")
+#     #     print("True")
 #     # for x in range(len(r)):
 #     #     if 'Peek In main()' in r[x]:
 #             # count+=1
@@ -23,10 +22,8 @@
 #
 #
 # # def stop_background_script():
-# #     print("script_state")
 # #     count=0
 # #     r = os.popen('tasklist /v').read().strip().split('\n')
-# #     # r = os.popen('tasklist /v').read().strip().split('\n')
 # #     print('# of tasks is {num}'.format(num=len(r)))
 # #     for x in range(len(r)):
 # #         if 'Running Peek In' in r[x]:
@@ -37,8 +34,7 @@
 # #     print("Total count is : "+str(count))
 
 
-
-
+##Code to test different theme wrappers
     # self.change = ttk.Button(self,text='change',command=self.changer)
     # self.change.grid()
 

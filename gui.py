@@ -397,6 +397,8 @@ class Application(ttk.Frame):
         if self.radio_var.get() == True:
             manage_auto_login(0)
 
+        elif check_auto_login() == 1:
+                manage_auto_login(1)
 
         ## If running, ends current background process before starting.
         if check_script():
@@ -514,7 +516,7 @@ class Application(ttk.Frame):
 
         mon_width = self.master.winfo_screenwidth()
         mon_height = self.master.winfo_screenheight()
-         
+
         if mon_width == 1920 and mon_height == 1080:
             anchor_offset = 0
         else:
