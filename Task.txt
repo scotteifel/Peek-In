@@ -17,3 +17,5 @@ make user name str()?
 
 
 log when program is turned on and off.
+
+prevent multiple boxes if delete day all clicked on more than once.

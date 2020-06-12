@@ -511,7 +511,17 @@ class Application(ttk.Frame):
             self.timestamp["text"]=pic_timestamps[pic_num-1]
 
         self.img = ImageTk.PhotoImage(img)
-        self.pic_window.create_image(40,40,anchor='nw',image=self.img)
+
+        mon_width = self.master.winfo_screenwidth()
+        mon_height = self.master.winfo_screenheight()
+         
+        if mon_width == 1920 and mon_height == 1080:
+            anchor_offset = 0
+        else:
+            anchor_offset = 10
+        self.pic_window.create_image(
+                        anchor_offset,0,anchor='nw',image=self.img)
+
 
         total -= 1
         self.pic_number["text"]=str(pic_num)+' of '+str(total)
@@ -520,8 +530,12 @@ class Application(ttk.Frame):
     def delete_day_all(self):
         ##Deletes entire days photos
         ##Accessed in gallery window
+
+        self.delete_day["state"] = "disabled"
         ok = messagebox.askokcancel(
             message="This will delete all pictures for this day, continue?")
+        self.delete_day["state"] = "normal"
+
         if not ok:
             return
 
@@ -531,10 +545,11 @@ class Application(ttk.Frame):
 
 
     def delete_account(self):
-
+        self.delete_user["state"] = "disabled"
         ok = messagebox.askokcancel(
         message="This will delete user and exit program.\n{x}Continue?"
         .format(x=" "*22))
+        self.delete_user["state"] = "normal"
 
         if not ok:
             return
@@ -560,6 +575,7 @@ class Application(ttk.Frame):
             self.after_cancel(routine)
 
         today = commence_script()
+        self.update_dates_menu()
 
         if self.variable.get() == "---":
             self.variable.set(today)
