@@ -33,6 +33,7 @@ class Application(ttk.Frame):
 
         super().__init__(master)
         self.master = master
+        self.password_limiter = 0
         self.clear_gallery()
         self.has_account()
 
@@ -57,11 +58,10 @@ class Application(ttk.Frame):
         self.enter_name.insert(0,name)
         self.enter_name.focus()
         self.enter_pass = ttk.Entry(self.master,show="*")
-        self.enter_pass.insert(0,"Scott1")
 
         self.radio_var = tk.IntVar(self.master)
         self.check_btn = ttk.Checkbutton(self.master,text="Auto-login",
-                            variable=self.radio_var)
+            variable=self.radio_var)
 
         self.greet.place(x=160,y=10)
         self.ask_name.place(x=60,y=52)
@@ -157,16 +157,16 @@ class Application(ttk.Frame):
                                         command=self.exit_program)
 
         self.welcome = ttk.Label(self.home_win, text="Welcome to Peek In",
-                                    font=("Helvetica",12))
-        self.timer = ttk.Label(self.home_win)
-        self.timer["text"]='Timer set to {amt} seconds.'.format(amt=set_delay)
+                                    font=("Helvetica 14"))
+        self.timer = ttk.Label(self.home_win,font='Helvetica 11 bold')
+        self.timer["text"]='Timer set to {amt} seconds'.format(amt=set_delay)
 
 
         self.welcome.place(x=110,y=7)
         self.image_viewer.place(x=135,y=35)
         self.select_dates.place(x=140,y=70)
 
-        self.timer.place(x=120,y=110)
+        self.timer.place(x=107,y=110)
 
         self.start_script.place(x=95,y=140)
         self.stop_script_btn.place(x=200,y=140)
@@ -374,6 +374,7 @@ class Application(ttk.Frame):
 
 
     def check_credentials(self):
+
         global set_delay
         global CRNT_USER
 
@@ -382,12 +383,20 @@ class Application(ttk.Frame):
 
         answer = validate_login(CRNT_USER,pasw)
 
+        if self.password_limiter == 6:
+            messagebox.askokcancel(message=
+            "Too many guesses.  Please wait 15 seconds before trying again.")
+            self.too_many_guesses()
+            return
+
         if answer == "Not found":
             messagebox.askokcancel(message=
                         "Please enter a valid username\n or create a new one")
             return
+
         if answer == "Pass incorrect":
             messagebox.askokcancel(message="Invalid password.")
+            self.password_limiter += 1
             return
 
         set_delay = check_time_delay()
@@ -404,6 +413,19 @@ class Application(ttk.Frame):
         if check_script():
             end_script()
             self.started_script()
+
+
+    def too_many_guesses(self):
+        if self.password_limiter == 6:
+            self.enter['state'] = 'disabled'
+            self.new_account['state'] = 'disabled'
+            routine = self.after(15000, self.too_many_guesses)
+            self.password_limiter = 0
+            return routine
+        else:
+            self.enter['state'] = 'normal'
+            self.new_account['state'] = 'normal'
+            return
 
 
     def create_user(self):
@@ -639,7 +661,7 @@ class Application(ttk.Frame):
             pass
         print("Withdrew")
 
-
+    #generates the coordinates to be added to each window geometry method.
     def place_window_center(self,width,height,height_offset=0):
         monitor_width = self.master.winfo_screenwidth()
         monitor_height = self.master.winfo_screenheight()
@@ -694,8 +716,6 @@ class Application(ttk.Frame):
         end_process()
         end_script()
 
-
-
 ######  END OF CLASS ######
 
 
@@ -730,7 +750,6 @@ def main():
     root.title("Peek In")
     app = Application(master=root)
     app.mainloop()
-
 
 
 if __name__ == '__main__':
