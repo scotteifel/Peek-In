@@ -10,7 +10,6 @@ make user name str()?
 
 log when program is turned on and off.
 
-
 Start Script green.
 Stop Script red.
 - Note:
@@ -27,3 +26,4 @@ Make dates in / format rather than .
    - Add option of selecting picture resolutions.  Currently set to balance 
    size and quality
    
+   - Add a slideshow mode in gallery

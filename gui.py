@@ -29,8 +29,8 @@ class Application(ttk.Frame):
     ############################
 
     def login_window(self, name):
-        width_height = 380, 180
-        c = self.place_window_center(width_height[0], width_height[1])
+        WIDTH_HEIGHT = 380, 180
+        c = self.place_window_center(WIDTH_HEIGHT[0], WIDTH_HEIGHT[1])
         self.master.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
         self.master.resizable(False, False)
 
@@ -52,8 +52,8 @@ class Application(ttk.Frame):
         self.enter_pass = ttk.Entry(self.master, show="*")
 
         self.radio_var = tk.IntVar(self.master)
-        self.check_btn = ttk.Checkbutton(self.master, text="Auto-login",
-                                         variable=self.radio_var)
+        self.check_btn = ttk.Checkbutton(
+            self.master, text="Auto-login", variable=self.radio_var)
 
         self.greet.place(x=160, y=10)
         self.ask_name.place(x=60, y=52)
@@ -76,8 +76,8 @@ class Application(ttk.Frame):
         self.new_user_win.protocol('WM_DELETE_WINDOW', end_process)
         self.new_user_win.resizable(False, False)
 
-        width_height = 350, 200
-        c = self.place_window_center(width_height[0], width_height[1])
+        WIDTH_HEIGHT = 350, 200
+        c = self.place_window_center(WIDTH_HEIGHT[0], WIDTH_HEIGHT[1])
         self.new_user_win.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
 
         self.submit = ttk.Button(self.new_user_win, text="Submit",
@@ -123,8 +123,8 @@ class Application(ttk.Frame):
         self.home_win.title("Peek In")
         self.home_win.protocol('WM_DELETE_WINDOW', self.hide)
         self.home_win.resizable(False, False)
-        width_height = 367, 300
-        c = self.place_window_center(width_height[0], width_height[1])
+        WIDTH_HEIGHT = 367, 300
+        c = self.place_window_center(WIDTH_HEIGHT[0], WIDTH_HEIGHT[1])
         self.home_win.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
 
         self.variable = tk.StringVar(self.home_win)
@@ -153,9 +153,12 @@ class Application(ttk.Frame):
                                        command=self.exit_program)
 
         self.welcome = ttk.Label(self.home_win, text="Peek In",
-                                 font=(TITLE_FONT + " 14"))
+                                 font=(TITLE_FONT))
         self.timer = ttk.Label(self.home_win, font='Helvetica 11 bold')
-        self.timer["text"] = 'Timer set to {amt} seconds'.format(amt=set_delay)
+
+        amt = set_delay
+        self.timer["text"] = 'Timer set to {amount} second{s}'.format(
+            amount=amt, s="s" if amt != 1 else "")
 
         self.welcome.place(x=150, y=7)
         self.image_viewer.place(x=135, y=35)
@@ -186,8 +189,8 @@ class Application(ttk.Frame):
         self.settings_win = tk.Toplevel(self.master)
         self.settings_win.resizable(False, False)
 
-        width_height = 300, 180
-        c = self.place_window_center(width_height[0], width_height[1],
+        WIDTH_HEIGHT = 300, 180
+        c = self.place_window_center(WIDTH_HEIGHT[0], WIDTH_HEIGHT[1],
                                      height_offset=15)
         self.settings_win.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
 
@@ -601,7 +604,7 @@ class Application(ttk.Frame):
             self.variable.set(today)
 
         # Renames title to enable subprocess to identify it.
-        self.home_win.title("{user} Peek In (Running)".format(user=CRNT_USER))
+        self.home_win.title("{user} Peek In (running)".format(user=CRNT_USER))
 
         routine = self.after(set_delay * 1000, self.started_script)
         return routine
@@ -619,7 +622,8 @@ class Application(ttk.Frame):
         global set_delay
         set_delay = int(self.enter_timer_delay.get())
         set_delay_time(set_delay)
-        self.timer["text"] = 'Timer set to {amt} seconds'.format(amt=set_delay)
+        self.timer["text"] = 'Timer set to {amount} second{s}'.format(
+            amount=set_delay, s="s" if set_delay != 1 else "")
 
     def update_dates_menu(self):
         menu = self.select_dates["menu"]
@@ -720,7 +724,7 @@ def end_script():
     si = subprocess.STARTUPINFO()
     si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     subprocess.call(
-        'cmd /c "taskkill /f /FI "WINDOWTITLE eq {tab} Peek In (Running)*"" /T'
+        'cmd /c "taskkill /f /FI "WINDOWTITLE eq {tab} Peek In (running)*"" /T'
         .format(tab=CRNT_USER), shell=True, startupinfo=si)
 # Changing window titles is used for task manager call
 # identification.  Different states will either be left or ended

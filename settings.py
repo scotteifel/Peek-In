@@ -8,4 +8,4 @@ PIC_EXT = ".jpg"
 PREV_PIC = b" "
 
 
-TITLE_FONT = 'Georgia'
+TITLE_FONT = 'Georgia 14'
