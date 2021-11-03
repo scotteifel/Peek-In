@@ -10,8 +10,6 @@ make user name str()?
 
 log when program is turned on and off.
 
-change timer amount on main window when changed in settings
-
 
 Start Script green.
 Stop Script red.

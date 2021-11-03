@@ -219,10 +219,6 @@ class Application(ttk.Frame):
         self.delete_user.place(x=60, y=111)
         self.delete_settings_win.place(x=170, y=111)
 
-        self.bind(self, sequence="Button1", func=self.print_hello)
-
-    def print_hello():
-        print('hello')
     ####   Gallery Window   ####
     ############################
 
@@ -623,6 +619,7 @@ class Application(ttk.Frame):
         global set_delay
         set_delay = int(self.enter_timer_delay.get())
         set_delay_time(set_delay)
+        self.timer["text"] = 'Timer set to {amt} seconds'.format(amt=set_delay)
 
     def update_dates_menu(self):
         menu = self.select_dates["menu"]
@@ -703,7 +700,9 @@ class Application(ttk.Frame):
         end_process()
         end_script()
 
-######  END OF CLASS ######
+##########                  ###########
+#####  End of Application Class  ######
+##########                  ###########
 
 
 # Run before program loads to prevent multiple instances from appearing.
@@ -733,14 +732,12 @@ def end_script():
 
 def main():
     create_database()
-
     root = ThemedTk(theme="arc")
     root.title("Peek In")
     icon = PhotoImage(file='Peekin_Icon.png')
     root.iconphoto(True, icon)
 
     app = Application(master=root)
-
     app.mainloop()
 
 
