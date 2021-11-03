@@ -11,3 +11,14 @@ fix time delay to be longer.
 make user name str()?
 
 log when program is turned on and off.
+
+change timer amount on main window when changed in settings
+
+Screenshot multiple monitors.
+
+Start Script green.
+Stop Script red.
+
+Make interval numbers a different color or bg color.
+
+Make dates in / format rather than .
