@@ -2,8 +2,6 @@
 
 how to start program on startup
 
-icon
-
 Donations?
 
 fix time delay to be longer.
@@ -14,11 +12,20 @@ log when program is turned on and off.
 
 change timer amount on main window when changed in settings
 
-Screenshot multiple monitors.
 
 Start Script green.
 Stop Script red.
+- Note:
+   Apparently ttkthemes does not support easily changing the background
+   color of buttons.
 
 Make interval numbers a different color or bg color.
 
 Make dates in / format rather than .
+
+
+"Potential feature list"
+
+   - Add option of selecting picture resolutions.  Currently set to balance 
+   size and quality
+   

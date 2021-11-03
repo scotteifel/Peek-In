@@ -8,28 +8,11 @@ from PIL import ImageTk, Image
 from app import commence_script, sort_gallery, sort_times
 from create_db import create_database
 from db_functions import *
+from settings import *
 
-#  Potential Removable code
-
-# from db_functions import (add_username, validate_login, retrieve_image,
-#                           set_delay_time, check_time_delay, fetch_dates, delete_image, delete_day,
-#                           script_off, check_script, save_to_comp, find_last_user, delete_user,
-#                           manage_auto_login, db_auto_login, check_auto_login)
-
-# Styling
+# Styling Layer
 from tkinter import ttk
 from ttkthemes import ThemedTk
-
-global set_delay
-global pic_num
-global script_title
-global CRNT_USER
-
-pic_num = 1
-# pic_ext var in db_functions file and app file also. Used .jpg
-# to reduce pic size, other ext should work. Eg ".png". Need to
-# change im.save(initial pic) "quality" kwarg in app.py also if modified
-pic_ext = ".jpg"
 
 
 class Application(ttk.Frame):
@@ -169,12 +152,12 @@ class Application(ttk.Frame):
         self.quit_program = ttk.Button(self.home_win, text="Exit Progam",
                                        command=self.exit_program)
 
-        self.welcome = ttk.Label(self.home_win, text="Welcome to Peek In",
-                                 font=("Helvetica 14"))
+        self.welcome = ttk.Label(self.home_win, text="Peek In",
+                                 font=(TITLE_FONT + " 14"))
         self.timer = ttk.Label(self.home_win, font='Helvetica 11 bold')
         self.timer["text"] = 'Timer set to {amt} seconds'.format(amt=set_delay)
 
-        self.welcome.place(x=110, y=7)
+        self.welcome.place(x=150, y=7)
         self.image_viewer.place(x=135, y=35)
         self.select_dates.place(x=140, y=70)
 
@@ -236,12 +219,16 @@ class Application(ttk.Frame):
         self.delete_user.place(x=60, y=111)
         self.delete_settings_win.place(x=170, y=111)
 
+        self.bind(self, sequence="Button1", func=self.print_hello)
+
+    def print_hello():
+        print('hello')
     ####   Gallery Window   ####
     ############################
 
     def gallery_window(self):
         global total
-        global pic_num
+        global PIC_NUM
         global pic_timestamps
         global pictures
         global anchor_offset
@@ -262,7 +249,7 @@ class Application(ttk.Frame):
             # pictures & pic_stamps referenced for gallery
             # and saving pic to comp.
             pictures = ['gallery/' + x for x in os.listdir("gallery/")
-                        if x.endswith(pic_ext)]
+                        if x.endswith(PIC_EXT)]
             pictures = sort_gallery(pictures)
             with open("crnt.txt") as file:
                 pic_timestamps = [line.strip() for line in file]
@@ -286,7 +273,7 @@ class Application(ttk.Frame):
             self.pic_number = ttk.Label(self.win)
             self.pic_number["text"] = "1 of " + str(total)
 
-            img = Image.open('gallery/1'+pic_ext)
+            img = Image.open('gallery/1'+PIC_EXT)
             self.img = ImageTk.PhotoImage(img)
 
             m_wd = self.master.winfo_screenwidth()
@@ -298,6 +285,7 @@ class Application(ttk.Frame):
             centr = pic_w/2
             self.pic_window = tk.Canvas(self.win, width=pic_w, height=pic_h)
 
+            # For 1080p resolution
             if mon_width == 1920 and mon_height == 1080:
                 anchor_offset = 0
                 self.win.geometry("%dx%d+%d+%d" %
@@ -327,7 +315,7 @@ class Application(ttk.Frame):
 
                 self.pic_window.place(x=10, y=10)
                 self.pic_number.place(x=centr+3, y=pic_h+13)
-                self.timestamp.place(x=centr-15, y=pic_h+30)
+                self.timestamp.place(x=centr-10, y=pic_h+30)
 
                 self.previous.place(x=centr-66, y=pic_h+53)
                 self.next.place(x=centr+22, y=pic_h+53)
@@ -338,7 +326,7 @@ class Application(ttk.Frame):
 
                 self.back_button.place(x=centr-23, y=pic_h+122)
 
-            pic_num = 1
+            PIC_NUM = 1
 
 #############################
 #                           #
@@ -476,42 +464,43 @@ class Application(ttk.Frame):
                 message="Password must be longer than 4 characters.")
 
     def next_pic(self):
-        global pic_num
+
+        global PIC_NUM
 
         if total == 1:
             return
 
-        if pic_num < total:
-            img = Image.open(pictures[pic_num])
-            pic_num += 1
+        if PIC_NUM < total:
+            img = Image.open(pictures[PIC_NUM])
+            PIC_NUM += 1
 
         else:
             img = Image.open(pictures[0])
-            pic_num = 1
+            PIC_NUM = 1
         self.img = ImageTk.PhotoImage(img)
         self.pic_window.create_image(anchor_offset, 0, anchor='nw',
                                      image=self.img)
-        self.pic_number["text"] = str(pic_num) + " of " + str(total)
-        self.timestamp["text"] = pic_timestamps[pic_num-1]
+        self.pic_number["text"] = str(PIC_NUM) + " of " + str(total)
+        self.timestamp["text"] = pic_timestamps[PIC_NUM-1]
 
     def previous_pic(self):
 
-        global pic_num
+        global PIC_NUM
 
         if total == 1:
             return
 
-        if pic_num > 1:
-            pic_num -= 1
-            img = Image.open(pictures[pic_num-1])
+        if PIC_NUM > 1:
+            PIC_NUM -= 1
+            img = Image.open(pictures[PIC_NUM-1])
         else:
-            pic_num = total
+            PIC_NUM = total
             img = Image.open(pictures[-1])
         self.img = ImageTk.PhotoImage(img)
         self.pic_window.create_image(anchor_offset, 0, anchor='nw',
                                      image=self.img)
-        self.pic_number["text"] = str(pic_num) + " of " + str(total)
-        self.timestamp["text"] = pic_timestamps[pic_num-1]
+        self.pic_number["text"] = str(PIC_NUM) + " of " + str(total)
+        self.timestamp["text"] = pic_timestamps[PIC_NUM-1]
 
     def save_img(self):
 
@@ -521,7 +510,7 @@ class Application(ttk.Frame):
     def delete_im(self):
 
         global total
-        global pic_num
+        global PIC_NUM
         global pictures
         global pic_timestamps
         global dates
@@ -534,20 +523,20 @@ class Application(ttk.Frame):
             return
 
         pic_timestamps.remove(self.timestamp.cget("text"))
-        if pic_num == 1:
+        if PIC_NUM == 1:
             pictures.remove(pictures[0])
             self.timestamp["text"] = pic_timestamps[0]
             if total == 2:
                 img = Image.open(pictures[0])
             else:
-                img = Image.open(pictures[pic_num-1])
+                img = Image.open(pictures[PIC_NUM-1])
         else:
-            pictures.remove(pictures[pic_num-1])
-            if pic_num == total:
-                pic_num -= 1
-            path = pictures[pic_num-1]
+            pictures.remove(pictures[PIC_NUM-1])
+            if PIC_NUM == total:
+                PIC_NUM -= 1
+            path = pictures[PIC_NUM-1]
             img = Image.open(path)
-            self.timestamp["text"] = pic_timestamps[pic_num-1]
+            self.timestamp["text"] = pic_timestamps[PIC_NUM-1]
 
         self.img = ImageTk.PhotoImage(img)
 
@@ -562,7 +551,7 @@ class Application(ttk.Frame):
             anchor_offset, 0, anchor='nw', image=self.img)
 
         total -= 1
-        self.pic_number["text"] = str(pic_num) + ' of ' + str(total)
+        self.pic_number["text"] = str(PIC_NUM) + ' of ' + str(total)
 
     def delete_day_all(self):
         # Deletes entire days photos
@@ -634,9 +623,6 @@ class Application(ttk.Frame):
         global set_delay
         set_delay = int(self.enter_timer_delay.get())
         set_delay_time(set_delay)
-        if set_delay == 1:
-            self.timer["text"] = 'Timer set to 1 second.'
-            return
 
     def update_dates_menu(self):
         menu = self.select_dates["menu"]
@@ -742,7 +728,7 @@ def end_script():
 # depending on the function.  IE "Peek In"-(Users script not running)
 # to "Running Peek in"-(Users script is running)
 # If one users script is running, and another opens program, first users
-# script will not be terminated because if has a specific name attached
+# script will not be terminated because it has a specific name attached
 
 
 def main():

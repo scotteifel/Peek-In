@@ -2,20 +2,17 @@ import sqlite3
 import zlib
 import base64
 import os
-import PIL
+
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.fernet import Fernet
 from argon2 import PasswordHasher
 
-global CRNT_USR
-global KEY
-global usr_info
+from settings import PIC_EXT
 
-pic_ext = ".jpg"
 salt = b'!}\xf2\xfe\xfe \xea\xed\xbe\xdaWF\xa39\xadL'
-
 ph = PasswordHasher()
 
 
@@ -27,7 +24,7 @@ def find_last_user():
         cur.execute('''SELECT l_user FROM last_user''')
         user = cur.fetchone()[0]
 
-        # Checking if autologin set to 1 (which is True)
+        # Check if autologin set to 1 (True)
         cur.execute('''SELECT login_state FROM last_user''')
         x = cur.fetchone()[0]
         if x == 1:
@@ -232,7 +229,7 @@ def retrieve_image(day):
     times = []
     for item in info:
         decompressed = zlib.decompress(item[0])
-        with open(temp_path + str(x) + pic_ext, 'wb') as file:
+        with open(temp_path + str(x) + PIC_EXT, 'wb') as file:
             file.write(fernet.decrypt(decompressed))
             times.append(item[1])
             x += 1
@@ -329,7 +326,7 @@ def save_to_comp(picture):
     # Symbols reformatted to prepare file for save to desktop.
     desktop_path = desktop_path.replace("\\", "/")
     picture = picture.replace(":", "h`").replace(".", "min`")
-    picture = picture.replace(" ", "s-")+pic_ext
+    picture = picture.replace(" ", "s-")+PIC_EXT
 
     desktop_path += "/PeekIn Pictures"
     # Specific "day" folder within desktop picture folder

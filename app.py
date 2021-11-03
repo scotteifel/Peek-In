@@ -7,20 +7,23 @@ import datetime
 # import sys
 # import io
 from db_functions import img_to_db
-
-pic_ext = ".jpg"
-prev_pic = b" "
+from settings import PIC_EXT, PREV_PIC
 
 
 def commence_script():
-    global prev_pic
+    global PREV_PIC
 
     now = datetime.datetime.now()
-    current = now.strftime("%I:%M.%S %p")
-    today = now.strftime("%m.%d.%y")
-    today = now.strftime("%m.%d.%y")
 
-    initial_pic = "screenshot/current1"+pic_ext
+    # Remove any 0 before a time from 1-9
+    formatted_hour = now.strftime("%I")
+    if formatted_hour[0] == '0':
+        formatted_hour = formatted_hour[1]
+
+    current = now.strftime(formatted_hour + ":%M:%S %p")
+    today = now.strftime(r"%m/%d/%y")
+
+    initial_pic = "screenshot/current1"+PIC_EXT
     img = pyautogui.screenshot(initial_pic)
     print("Screenshot taken")
 
@@ -34,10 +37,10 @@ def commence_script():
         # If length of bytes same as previous picture,
         # picture not saved bc it must be same pic, to save space.
         crnt = len(file.read())
-        if prev_pic == crnt:
+        if PREV_PIC == crnt:
             print("Same Screenshot")
             return
-        prev_pic = crnt
+        PREV_PIC = crnt
 
     img_to_db(current, today, initial_pic)
     return today
