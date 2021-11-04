@@ -387,7 +387,7 @@ class Application(ttk.Frame):
 
         answer = validate_login(CRNT_USER, pasw)
 
-        if self.password_limiter == 6:
+        if self.password_limiter == MAX_TRIES:
             messagebox.askokcancel(
                 message="Too many guesses.  Please wait 15 seconds before trying again.")
             self.too_many_guesses()
@@ -512,7 +512,6 @@ class Application(ttk.Frame):
         global PIC_NUM
         global pictures
         global pic_timestamps
-        global dates
 
         delete_image(self.timestamp.cget("text"))
 
@@ -554,7 +553,7 @@ class Application(ttk.Frame):
 
     def delete_day_all(self):
         # Deletes entire days photos
-        # Accessed in gallery window
+        # Accessed only in gallery window
 
         self.delete_day["state"] = "disabled"
         ok = messagebox.askokcancel(
@@ -579,7 +578,7 @@ class Application(ttk.Frame):
             return
 
         delete_user(CRNT_USER)
-        # ASK TO CANCEL DOESNT DO THE WINDOWS ERROR SOUND
+
         messagebox.askokcancel(message="{s} successfully removed from database.\n{x}Program will now close"
                                .format(s=CRNT_USER, x=" "*15))
         end_process()
@@ -588,8 +587,8 @@ class Application(ttk.Frame):
     def started_script(self):
         global routine
 
-        # Used try/except so when script is already running and started again
-        # current script stops and is restarted to prevent multiple instances.
+        # Try/except so when script is already running and started again
+        # current script stops to prevent multiple instances.
         try:
             routine
         except:
@@ -613,7 +612,6 @@ class Application(ttk.Frame):
         self.home_win.title("Peek In")
         try:
             self.after_cancel(routine)
-            self.script_on.pack_forget()
         except:
             pass
         script_off()
@@ -652,7 +650,7 @@ class Application(ttk.Frame):
             pass
         print("Withdrew")
 
-    # generates the coordinates to be added to each window geometry method.
+    # Generates coordinates for a windows "geometry" method.
     def place_window_center(self, width, height, height_offset=0):
         monitor_width = self.master.winfo_screenwidth()
         monitor_height = self.master.winfo_screenheight()
@@ -687,7 +685,6 @@ class Application(ttk.Frame):
         self.win.destroy()
 
     # Clears temporary gallery folder of pictures.
-
     def clear_gallery(self):
         gallery_grp = 'gallery/'
         t = [gallery_grp+x.name for x in Path(gallery_grp).iterdir()]

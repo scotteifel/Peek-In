@@ -3,12 +3,11 @@ import zlib
 import base64
 import os
 
-
+from argon2 import PasswordHasher
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.fernet import Fernet
-from argon2 import PasswordHasher
 
 from settings import PIC_EXT
 
@@ -24,7 +23,7 @@ def find_last_user():
         cur.execute('''SELECT l_user FROM last_user''')
         user = cur.fetchone()[0]
 
-        # Check if autologin set to 1 (True)
+        # Check if autologin is set to 1 (True)
         cur.execute('''SELECT login_state FROM last_user''')
         x = cur.fetchone()[0]
         if x == 1:
@@ -56,6 +55,7 @@ def manage_auto_login(x):
     conn = sqlite3.connect('main.db')
     cur = conn.cursor()
 
+    # Enables auto-login
     if x == 0:
         cur.execute('''UPDATE last_user SET l_user_key = (?)''', (KEY,))
         conn.commit()
@@ -65,7 +65,8 @@ def manage_auto_login(x):
         conn.close()
         return
 
-    # Replaces any previously stored key.
+    # Replace any previously stored key with an empty value and
+    # disable auto-login
     cur.execute('''UPDATE last_user SET l_user_key = (?)''', (b' ',))
     conn.commit()
 
@@ -178,7 +179,7 @@ def validate_login(name, pasw):
                      salt=salt, iterations=100000, backend=default_backend())
     KEY = base64.urlsafe_b64encode(kdf.derive(password))
 
-    # Updating to autofill last user in login screen
+    # Update to autofill the last user's name at the login screen
     cur.execute('''UPDATE last_user SET l_user = (?)''', (name,))
     conn.commit()
     cur.close()
@@ -220,7 +221,7 @@ def retrieve_image(day):
     cur = conn.cursor()
 
     temp_path = 'gallery/'
-    qry = cur.execute('''SELECT data,picture FROM {tab} WHERE day=?'''
+    qry = cur.execute('''SELECT data, picture FROM {tab} WHERE day=?'''
                       .format(tab=CRNT_USR), (day,))
 
     info = qry.fetchall()
@@ -323,10 +324,10 @@ def save_to_comp(picture):
     qry = cur.fetchall()[0]
 
     desktop_path = os.path.expanduser("~/Desktop")
-    # Symbols reformatted to prepare file for save to desktop.
+    # Symbols reformatted to prepare file for saving to desktop.
     desktop_path = desktop_path.replace("\\", "/")
     picture = picture.replace(":", "h`").replace(".", "min`")
-    picture = picture.replace(" ", "s-")+PIC_EXT
+    picture = picture.replace(" ", "s-") + PIC_EXT
 
     desktop_path += "/PeekIn Pictures"
     # Specific "day" folder within desktop picture folder

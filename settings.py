@@ -7,5 +7,7 @@ PIC_EXT = ".jpg"
 # Sets the previous pictures default data to a blank byte on first call.
 PREV_PIC = b" "
 
-
 TITLE_FONT = 'Georgia 14'
+
+# Max password tries before temporary lockout
+MAX_TRIES = 6

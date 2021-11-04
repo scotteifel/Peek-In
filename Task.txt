@@ -2,11 +2,10 @@
 
 how to start program on startup
 
-Donations?
-
-fix time delay to be longer.
 
 make user name str()?
+
+Make sure proper value is entered for timer delay.
 
 log when program is turned on and off.
 
@@ -18,7 +17,7 @@ Stop Script red.
 
 Make interval numbers a different color or bg color.
 
-Make dates in / format rather than .
+Close setting window on submit new delay time.
 
 
 "Potential feature list"
@@ -27,3 +26,6 @@ Make dates in / format rather than .
    size and quality
    
    - Add a slideshow mode in gallery
+
+
+Donations?
