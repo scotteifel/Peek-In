@@ -149,7 +149,7 @@ class Application(ttk.Frame):
                                    command=self.settings_window)
         self.logout_btn = ttk.Button(self.home_win, text="  Logout  ",
                                      command=self.logout)
-        self.quit_program = ttk.Button(self.home_win, text="Exit Progam",
+        self.quit_program = ttk.Button(self.home_win, text="Exit Program",
                                        command=self.exit_program)
 
         self.welcome = ttk.Label(self.home_win, text="Peek In",

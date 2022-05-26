@@ -1,23 +1,26 @@
 -Fixes/upgrades
 
-how to start program on startup
+   Send screenshots to email address?
 
+   Why aren't pics saving.
 
-make user name str()?
+   how to start program on startup
 
-Make sure proper value is entered for timer delay.
+   make user name str()?
 
-log when program is turned on and off.
+   Make sure proper value is entered for timer delay.
 
-Start Script green.
-Stop Script red.
-- Note:
-   Apparently ttkthemes does not support easily changing the background
-   color of buttons.
+   log when program is turned on and off.
 
-Make interval numbers a different color or bg color.
+   Start Script green.
+   Stop Script red.
+   - Note:
+      Apparently ttkthemes does not support easily changing the background
+      color of buttons.
 
-Close setting window on submit new delay time.
+   Make interval numbers a different color or bg color.
+
+   Close setting window on submit new delay time.
 
 
 "Potential feature list"

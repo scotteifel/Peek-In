@@ -328,7 +328,6 @@ def save_to_comp(picture):
     desktop_path = desktop_path.replace("\\", "/")
     picture = picture.replace(":", "h`").replace(".", "min`")
     picture = picture.replace(" ", "s-") + PIC_EXT
-
     desktop_path += "/PeekIn Pictures"
     # Specific "day" folder within desktop picture folder
     # created with qry 1 result

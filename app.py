@@ -16,7 +16,7 @@ def commence_script():
         formatted_hour = formatted_hour[1]
 
     current = now.strftime(formatted_hour + ":%M:%S %p")
-    today = now.strftime(r"%m/%d/%y")
+    today = now.strftime(r"%m.%d.%y")
 
     initial_pic = "screenshot/current1"+PIC_EXT
     img = pyautogui.screenshot(initial_pic)
