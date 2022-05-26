@@ -357,6 +357,7 @@ def delete_image(time):
                 .format(tab=CRNT_USR), (time,))
     conn.commit()
     cur.close()
+    conn.execute('VACUUM')
     conn.close()
 
 
@@ -368,6 +369,7 @@ def delete_day(day):
                 .format(tab=CRNT_USR), (day,))
     conn.commit()
     cur.close()
+    conn.execute('VACUUM')
     conn.close()
 
 
@@ -380,4 +382,5 @@ def delete_user(name):
     cur.execute('''UPDATE last_user SET l_user = (?)''', (" ",))
     conn.commit()
     cur.close()
+    conn.execute('VACUUM')
     conn.close()
