@@ -357,6 +357,7 @@ def delete_image(time):
                 .format(tab=CRNT_USR), (time,))
     conn.commit()
     cur.close()
+    # Vacuum reduces the size of the database on deletions
     conn.execute('VACUUM')
     conn.close()
 

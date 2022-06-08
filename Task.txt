@@ -29,6 +29,3 @@
    size and quality
    
    - Add a slideshow mode in gallery
-
-
-Donations?
