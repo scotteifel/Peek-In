@@ -18,6 +18,8 @@ To use:
 
 This could be turned into an executable program.
 
+This is developed for the Windows OS currently.
+
 Code of Conduct:
   Be respectful
   
