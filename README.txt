@@ -16,4 +16,4 @@ To use:
    and it will be saved into a database to add to the security of the information stored.
    Only a signed in user can access their screenshots.
 
-This could be turned into an exe program.
+This could be turned into an executable program.

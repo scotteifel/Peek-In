@@ -327,11 +327,11 @@ class Application(ttk.Frame):
 
             PIC_NUM = 1
 
-#############################
-#                           #
-#    End of Windows Code    #
-#                           #
-#############################
+##########################################
+#        ^^^^^^^^^^^^^^^^^^^^^^^         #
+#    End of Different GUI Window Code    #
+#                                        #
+##########################################
 
     def has_account(self):
         global CRNT_USER
@@ -735,8 +735,8 @@ def main():
     create_database()
     root = ThemedTk(theme="arc")
     root.title("Peek In")
-    icon = PhotoImage(file='Peekin_Icon.png')
-    root.iconphoto(True, icon)
+    # icon = PhotoImage(file='')
+    # root.iconphoto(True, icon)
 
     app = Application(master=root)
     app.mainloop()

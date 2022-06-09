@@ -2,8 +2,6 @@
 
    Send screenshots to email address?
 
-   Why aren't pics saving.
-
    how to start program on startup
 
    make user name str()?
