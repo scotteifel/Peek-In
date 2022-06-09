@@ -17,3 +17,8 @@ To use:
    Only a signed in user can access their screenshots.
 
 This could be turned into an executable program.
+
+Code of Conduct:
+  Be respectful
+  
+Your work on this project is appreciated.
