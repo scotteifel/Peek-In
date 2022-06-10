@@ -23,4 +23,4 @@ This is developed for the Windows OS currently.
 Code of Conduct:
   Be respectful
   
-Your work on this project is appreciated.
+Contributions to this project are appreciated!
