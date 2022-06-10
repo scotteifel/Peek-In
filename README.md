@@ -8,7 +8,7 @@ in the background, so it is not easily detectable.
 
 This uses the Tkinter and TTkinter (for a better UI) packages.
 
-To use:
+## Getting Started:
    Clone the project, install the dependencies, and run the program by typing gui.py in a terminal.
 
    After creating an account, you set a time delay 
@@ -22,7 +22,7 @@ This could be turned into an executable program.
 
 This is developed for the Windows OS currently.
 
-Code of Conduct:
+## Code of Conduct:
   Be respectful
   
-Contributions to this project are appreciated!
+Contributions are appreciated!
