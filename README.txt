@@ -1,6 +1,6 @@
 Peek-In
 
-![](/Peek-In/assets/PeekInMainWindow.png?raw=true "Main Window Screenshot")
+![Home Window](https://github.com/scotteifel/Peek-In/blob/master/assets/PeekInMainWindow.png?raw=true)
 
 Hello and welcome. This is a device monitoring app.  It could be useful for parents who want to monitor what is on
 the computer screen.  It stores screenshots which can be retrieved later.  It also has a way to run
