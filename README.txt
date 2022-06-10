@@ -1,6 +1,6 @@
 Peek-In
 
-Hello, this is a device monitoring app.  It could be useful for parents who want to monitor what is on
+Hello and welcome. This is a device monitoring app.  It could be useful for parents who want to monitor what is on
 the computer screen.  It stores screenshots which can be retrieved later.  It also has a way to run
 in the background, so it is not easily detectable.
 
@@ -17,6 +17,8 @@ To use:
    Only a signed in user can access their screenshots.
 
 This could be turned into an executable program.
+
+This is developed for the Windows OS currently.
 
 Code of Conduct:
   Be respectful
