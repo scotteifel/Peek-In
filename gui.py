@@ -208,6 +208,8 @@ class Application(ttk.Frame):
         self.enter_timer_delay = ttk.Entry(self.settings_win, width=5)
         self.enter_timer_delay.delete(0, tk.END)
         self.enter_timer_delay.insert(0, set_delay)
+        # Start the cursor on the time delay box
+        self.enter_timer_delay.focus()
 
         self.setting_label = ttk.Label(self.settings_win, text="Settings",
                                        font=("Helvetica", 10))

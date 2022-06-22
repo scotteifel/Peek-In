@@ -18,8 +18,6 @@
 
    Make interval numbers a different color or bg color.
 
-   Close setting window on submit new delay time.
-
 
 "Potential feature list"
 
