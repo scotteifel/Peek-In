@@ -139,9 +139,9 @@ class Application(ttk.Frame):
 
         self.image_viewer = ttk.Button(self.home_win, text="View Images",
                                        command=self.gallery_window)
-        self.start_script = ttk.Button(self.home_win, text="Start Script",
+        self.start_script = ttk.Button(self.home_win, text="Start",
                                        command=self.started_script)
-        self.stop_script_btn = ttk.Button(self.home_win, text="Stop Script",
+        self.stop_script_btn = ttk.Button(self.home_win, text="Stop",
                                           command=self.stop_script)
         self.hide_wins = ttk.Button(self.home_win, text="Hide Window",
                                     command=self.hide)
@@ -620,10 +620,14 @@ class Application(ttk.Frame):
 
     def set_timer(self):
         global set_delay
-        set_delay = int(self.enter_timer_delay.get())
-        set_delay_time(set_delay)
-        self.timer["text"] = 'Timer set to {amount} second{s}'.format(
-            amount=set_delay, s="s" if set_delay != 1 else "")
+        try:
+            int(self.enter_timer_delay.get())
+            set_delay = int(self.enter_timer_delay.get())
+            set_delay_time(set_delay)
+            self.timer["text"] = 'Timer set to {amount} second{s}'.format(
+                amount=set_delay, s="s" if set_delay != 1 else "")
+        except:
+            self.enter_timer_delay.delete(0, tk.END)
 
     def update_dates_menu(self):
         menu = self.select_dates["menu"]
