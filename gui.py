@@ -632,7 +632,6 @@ class Application(ttk.Frame):
             for item in dates:
                 menu.add_command(label=item, command=lambda value=item:
                                  self.variable.set(value))
-            self.variable.set(dates[-1])
             return
         self.variable.set("---")
 
