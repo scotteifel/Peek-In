@@ -2,13 +2,10 @@
 
 ![PeekInMainWindow](https://user-images.githubusercontent.com/34344118/172986936-47beb405-a5d4-4f88-8fca-facb37ad94fd.png)
 
-Hello and welcome. This is a device monitoring app.  It could be useful for parents who want to monitor what is on
-the computer screen.  It stores screenshots which can be retrieved later.  It also has a way to run
+Hello and welcome. This is currently a program meant to enable parents to monitor what their children are seeing on the internet.  It stores screenshots which can be retrieved later.  It also has a way to run
 in the background, so it is not easily detectable.
 
-This uses the Tkinter and TTkinter (for a better UI) packages.
-
-To use:
+## Getting Started:
    Clone the project, install the dependencies, and run the program by typing gui.py in a terminal.
 
    After creating an account, you set a time delay 
@@ -22,7 +19,7 @@ This could be turned into an executable program.
 
 This is developed for the Windows OS currently.
 
-Code of Conduct:
+## Code of Conduct:
   Be respectful
   
-Contributions to this project are appreciated!
+Contributions are appreciated!
