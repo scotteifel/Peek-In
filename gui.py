@@ -1,18 +1,21 @@
 import os
 import subprocess
-import tkinter as tk
-from tkinter import messagebox, PhotoImage
+
 from pathlib import Path
 from PIL import ImageTk, Image
 
-from app import commence_script, sort_gallery, sort_times
-from create_db import create_database
-from db_functions import *
-from settings import *
+from tkinter import messagebox, PhotoImage
+import tkinter as tk
 
 # Styling Layer
 from tkinter import ttk
 from ttkthemes import ThemedTk
+
+from app import commence_script
+from utils import sort_gallery, sort_times
+from create_db import create_database
+from db_functions import *
+from settings import *
 
 
 class Application(ttk.Frame):
@@ -21,6 +24,7 @@ class Application(ttk.Frame):
 
         super().__init__(master)
         self.master = master
+        # Start the counter at 0 password entry attempts
         self.password_limiter = 0
         self.clear_gallery()
         self.has_account()
