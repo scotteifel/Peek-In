@@ -560,6 +560,7 @@ class Application(ttk.Frame):
     def delete_day_all(self):
         # Deletes entire days photos
         # Accessed only in gallery window
+        print("HEREEE")
 
         self.delete_day["state"] = "disabled"
         ok = messagebox.askokcancel(
@@ -569,9 +570,14 @@ class Application(ttk.Frame):
         if not ok:
             return
 
+        print('Starting 1')
         delete_day(self.variable.get())
+        print('Finished 1')
         self.close_gallery()
+
+        print('Starting 2')
         self.update_dates_menu()
+        print('Finsihed 2')
 
     def delete_account(self):
         self.delete_user["state"] = "disabled"

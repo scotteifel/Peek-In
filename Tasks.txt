@@ -18,6 +18,9 @@
 
    Make interval numbers a different color or bg color.
 
+   CURRENT:
+      Trying to reload the dates menu upon deletion of entire day of pics.
+
 
 "Potential feature list"
 
