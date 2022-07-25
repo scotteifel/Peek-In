@@ -30,7 +30,7 @@ class Application(ttk.Frame):
         self.has_account()
 
     ####   Login Window   ####
-    ############################
+    ##########################
 
     def login_window(self, name):
         WIDTH_HEIGHT = 380, 180
@@ -118,7 +118,7 @@ class Application(ttk.Frame):
         self.quit.place(x=228, y=145)
 
     ####  Home Window   ####
-    ############################
+    ########################
 
     def home_window(self):
         self.master.withdraw()
@@ -171,16 +171,16 @@ class Application(ttk.Frame):
         self.timer.place(x=107, y=110)
 
         self.start_script.place(x=95, y=140)
-        self.stop_script_btn.place(x=200, y=140)
+        self.stop_script_btn.place(x=190, y=140)
 
         self.hide_wins.place(x=89, y=185)
-        self.settings.place(x=200, y=185)
+        self.settings.place(x=195, y=185)
 
         self.logout_btn.place(x=96, y=230)
-        self.quit_program.place(x=200, y=230)
+        self.quit_program.place(x=190, y=230)
 
     ####   Settings Window   ####
-    ############################
+    #############################
 
     def settings_window(self):
         # Make sure window doesn't open twice
@@ -560,7 +560,6 @@ class Application(ttk.Frame):
     def delete_day_all(self):
         # Deletes entire days photos
         # Accessed only in gallery window
-        print("HEREEE")
 
         self.delete_day["state"] = "disabled"
         ok = messagebox.askokcancel(
@@ -570,14 +569,9 @@ class Application(ttk.Frame):
         if not ok:
             return
 
-        print('Starting 1')
         delete_day(self.variable.get())
-        print('Finished 1')
         self.close_gallery()
-
-        print('Starting 2')
         self.update_dates_menu()
-        print('Finsihed 2')
 
     def delete_account(self):
         self.delete_user["state"] = "disabled"
