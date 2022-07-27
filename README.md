@@ -2,7 +2,7 @@
 
 ![PeekInMainWindow](https://user-images.githubusercontent.com/34344118/172986936-47beb405-a5d4-4f88-8fca-facb37ad94fd.png)
 
-Hello and welcome. This is currently a program meant to enable parents to monitor what their children are seeing on the internet.  It stores screenshots which can be retrieved later.  It also has a way to run
+Hello and welcome. This is app is meant to help enable parents to monitor what their children are seeing on the internet.  It stores screenshots which can be retrieved later.  It also has a way to run
 in the background, so it is not easily detectable.
 
 ## Getting Started:
@@ -17,7 +17,7 @@ in the background, so it is not easily detectable.
 
 This could be turned into an executable program.
 
-This is developed for the Windows OS currently.
+Developed for Windows OS currently.
 
 ## Code of Conduct:
   Be respectful
