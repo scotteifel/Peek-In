@@ -1,7 +1,8 @@
 # Peek-In
 
-
-![PeekInMainWindow](https://user-images.githubusercontent.com/34344118/172986936-47beb405-a5d4-4f88-8fca-facb37ad94fd.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/34344118/172986936-47beb405-a5d4-4f88-8fca-facb37ad94fd.png"/>
+</p>
 
 Hello. This app is meant to help enable parents to monitor what their children are seeing on the internet.  It stores screenshots which can be retrieved later.  It also has a way to run
 in the background, so it is not easily detectable.
