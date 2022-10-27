@@ -18,11 +18,4 @@ This uses the Tkinter and TTkinter (for a better UI) packages.
    and it will be saved into a database to add to the security of the information stored.
    Only a signed in user can access their screenshots.
 
-This could be turned into an executable program.
-
-This is developed for the Windows OS currently.
-
-## Code of Conduct:
-  Be respectful
-  
-Contributions are appreciated!
+This could be turned into an executable program and is developed for Windows OS currently.
