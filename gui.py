@@ -1,18 +1,21 @@
 import os
 import subprocess
-import tkinter as tk
-from tkinter import messagebox, PhotoImage
+
 from pathlib import Path
 from PIL import ImageTk, Image
 
-from app import commence_script, sort_gallery, sort_times
-from create_db import create_database
-from db_functions import *
-from settings import *
+from tkinter import messagebox, PhotoImage
+import tkinter as tk
 
 # Styling Layer
 from tkinter import ttk
 from ttkthemes import ThemedTk
+
+from app import commence_script
+from utils import sort_gallery, sort_times
+from create_db import create_database
+from db_functions import *
+from settings import *
 
 
 class Application(ttk.Frame):
@@ -21,12 +24,13 @@ class Application(ttk.Frame):
 
         super().__init__(master)
         self.master = master
+        # Start the counter at 0 password entry attempts
         self.password_limiter = 0
         self.clear_gallery()
         self.has_account()
 
     ####   Login Window   ####
-    ############################
+    ##########################
 
     def login_window(self, name):
         WIDTH_HEIGHT = 380, 180
@@ -114,7 +118,7 @@ class Application(ttk.Frame):
         self.quit.place(x=228, y=145)
 
     ####  Home Window   ####
-    ############################
+    ########################
 
     def home_window(self):
         self.master.withdraw()
@@ -139,9 +143,9 @@ class Application(ttk.Frame):
 
         self.image_viewer = ttk.Button(self.home_win, text="View Images",
                                        command=self.gallery_window)
-        self.start_script = ttk.Button(self.home_win, text="Start Script",
+        self.start_script = ttk.Button(self.home_win, text="Start",
                                        command=self.started_script)
-        self.stop_script_btn = ttk.Button(self.home_win, text="Stop Script",
+        self.stop_script_btn = ttk.Button(self.home_win, text="Stop",
                                           command=self.stop_script)
         self.hide_wins = ttk.Button(self.home_win, text="Hide Window",
                                     command=self.hide)
@@ -167,16 +171,16 @@ class Application(ttk.Frame):
         self.timer.place(x=107, y=110)
 
         self.start_script.place(x=95, y=140)
-        self.stop_script_btn.place(x=200, y=140)
+        self.stop_script_btn.place(x=190, y=140)
 
         self.hide_wins.place(x=89, y=185)
-        self.settings.place(x=200, y=185)
+        self.settings.place(x=195, y=185)
 
         self.logout_btn.place(x=96, y=230)
-        self.quit_program.place(x=200, y=230)
+        self.quit_program.place(x=190, y=230)
 
     ####   Settings Window   ####
-    ############################
+    #############################
 
     def settings_window(self):
         # Make sure window doesn't open twice
@@ -208,6 +212,8 @@ class Application(ttk.Frame):
         self.enter_timer_delay = ttk.Entry(self.settings_win, width=5)
         self.enter_timer_delay.delete(0, tk.END)
         self.enter_timer_delay.insert(0, set_delay)
+        # Start the cursor on the time delay box
+        self.enter_timer_delay.focus()
 
         self.setting_label = ttk.Label(self.settings_win, text="Settings",
                                        font=("Helvetica", 10))
@@ -618,10 +624,14 @@ class Application(ttk.Frame):
 
     def set_timer(self):
         global set_delay
-        set_delay = int(self.enter_timer_delay.get())
-        set_delay_time(set_delay)
-        self.timer["text"] = 'Timer set to {amount} second{s}'.format(
-            amount=set_delay, s="s" if set_delay != 1 else "")
+        try:
+            int(self.enter_timer_delay.get())
+            set_delay = int(self.enter_timer_delay.get())
+            set_delay_time(set_delay)
+            self.timer["text"] = 'Timer set to {amount} second{s}'.format(
+                amount=set_delay, s="s" if set_delay != 1 else "")
+        except:
+            self.enter_timer_delay.delete(0, tk.END)
 
     def update_dates_menu(self):
         menu = self.select_dates["menu"]
@@ -632,7 +642,6 @@ class Application(ttk.Frame):
             for item in dates:
                 menu.add_command(label=item, command=lambda value=item:
                                  self.variable.set(value))
-            self.variable.set(dates[-1])
             return
         self.variable.set("---")
 
