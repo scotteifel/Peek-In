@@ -14,7 +14,7 @@ A screenshot will be taken and converted to a text file.  The file will be encry
 and it will be saved into a database to add to the security of the information stored.
 Only a signed in user can access their screenshots.
 
-This could be turned into an executable program and is developed for Windows OS currently.
+Windows OS currently.
 
-WARNING:
+User Be Aware:
 I use subprocesses to isolate the program and close it, which may need tweeking in order for it to be more stable.
