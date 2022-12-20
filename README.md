@@ -16,4 +16,5 @@ Only a signed in user can access their screenshots.
 
 This could be turned into an executable program and is developed for Windows OS currently.
 
+WARNING:
 I use subprocesses to isolate the program and close it, which may need tweeking in order for it to be more stable.
