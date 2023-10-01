@@ -1,9 +1,8 @@
-import pyautogui
+import pyscreeze
 import datetime
 
 from db_functions import img_to_db
 from settings import PIC_EXT, PREV_PIC
-
 
 def commence_script():
     global PREV_PIC
@@ -19,7 +18,8 @@ def commence_script():
     today = now.strftime(r"%m.%d.%y")
 
     initial_pic = "screenshot/current1"+PIC_EXT
-    img = pyautogui.screenshot(initial_pic)
+    # img = pyautogui.screenshot(initial_pic)
+    img = pyscreeze.screenshot(initial_pic)
     print("Screenshot taken")
 
     # Resize the fullscreen screenshot

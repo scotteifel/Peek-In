@@ -14,7 +14,6 @@ from settings import PIC_EXT
 salt = b'!}\xf2\xfe\xfe \xea\xed\xbe\xdaWF\xa39\xadL'
 ph = PasswordHasher()
 
-
 def find_last_user():
 
     conn = sqlite3.connect("main.db")
@@ -46,7 +45,7 @@ def db_auto_login(name, key):
     global KEY
 
     CRNT_USR = name
-    CRNT_USR_INF = CRNT_USR+"_info"
+    CRNT_USR_INF = CRNT_USR +"_info"
     KEY = key
 
 
@@ -323,19 +322,19 @@ def save_to_comp(picture):
                 .format(tab=CRNT_USR), (picture,))
     qry = cur.fetchall()[0]
 
-    desktop_path = os.path.expanduser("~/Desktop")
-    # Symbols reformatted to prepare file for saving to desktop.
-    desktop_path = desktop_path.replace("\\", "/")
+    programs_directory = os.getcwd()
+    # Symbols reformatted to prepare the file for saving.
+    programs_directory = programs_directory.replace("\\", "/")
     picture = picture.replace(":", "h`").replace(".", "min`")
-    picture = picture.replace(" ", "s-") + PIC_EXT
-    desktop_path += "/PeekIn Pictures"
-    # Specific "day" folder within desktop picture folder
+    picture = picture.replace(" ", "s-") +PIC_EXT
+    programs_directory += "/PeekIn Pictures"
+    # Specific "day" folder within picture folder
     # created with qry 1 result
-    day_folder = desktop_path+"/"+qry[1]
-    pic_filepath = day_folder+"/"+picture
+    day_folder = programs_directory +"/" +qry[1]
+    pic_filepath = day_folder +"/" +picture
     try:
-        os.mkdir(desktop_path)
-    except:
+        os.mkdir(programs_directory)
+    except OSError:
         pass
     try:
         os.mkdir(day_folder)

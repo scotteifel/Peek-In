@@ -1,5 +1,4 @@
 import os
-import subprocess
 
 from pathlib import Path
 from PIL import ImageTk, Image
@@ -77,7 +76,8 @@ class Application(ttk.Frame):
         self.master.withdraw()
 
         self.new_user_win = tk.Toplevel(self.master)
-        self.new_user_win.protocol('WM_DELETE_WINDOW', end_process)
+        # self.new_user_win.protocol('WM_DELETE_WINDOW', end_process)
+        self.new_user_win.protocol('WM_DELETE_WINDOW', self.destroy)
         self.new_user_win.resizable(False, False)
 
         WIDTH_HEIGHT = 350, 200
@@ -587,8 +587,10 @@ class Application(ttk.Frame):
 
         messagebox.askokcancel(message="{s} successfully removed from database.\n{x}Program will now close"
                                .format(s=CRNT_USER, x=" "*15))
-        end_process()
-        end_script()
+        # end_process()
+        self.destroy()
+        # end_script()
+
 
     def started_script(self):
         global routine
@@ -707,37 +709,23 @@ class Application(ttk.Frame):
     def exit_program(self):
         script_off()
         self.clear_gallery()
-        end_process()
-        end_script()
+        print('exit program func')
+        # end_process()
+        # end_script()
+        self.master.destroy()
 
 ##########                  ###########
 #####  End of Application Class  ######
 ##########                  ###########
 
 
-# Run before program loads to prevent multiple instances from appearing.
-# If run from inside program (tk button) it will close program.
 def end_process():
-    si = subprocess.STARTUPINFO()
-    si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    subprocess.call('cmd /c "taskkill /f /FI "WINDOWTITLE eq Peek In*"" /T',
-                    shell=True, startupinfo=si)
+    print('end process func')
 
 
-# Ends user-specific script running because window title was
-# changed to "<user> Running Peek In"
 def end_script():
-    si = subprocess.STARTUPINFO()
-    si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    subprocess.call(
-        'cmd /c "taskkill /f /FI "WINDOWTITLE eq {tab} Peek In (running)*"" /T'
-        .format(tab=CRNT_USER), shell=True, startupinfo=si)
-# Changing window titles is used for task manager call
-# identification.  Different states will either be left or ended
-# depending on the function.  IE "Peek In"-(Users script not running)
-# to "Running Peek in"-(Users script is running)
-# If one users script is running, and another opens program, first users
-# script will not be terminated because it has a specific name attached
+    print('end script func')
+
 
 
 def main():
@@ -752,5 +740,5 @@ def main():
 
 
 if __name__ == '__main__':
-    end_process()
+    # end_process()
     main()
