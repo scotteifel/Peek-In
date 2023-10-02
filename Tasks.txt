@@ -1,30 +1,34 @@
--Fixes/upgrades
-
-   Send screenshots to email address?
-
-   how to start program on startup
+-Fixes
 
    make user name str()?
 
    Make sure proper value is entered for timer delay.
 
-   log when program is turned on and off.
-
-   Start Script green.
-   Stop Script red.
    - Note:
       Apparently ttkthemes does not support easily changing the background
       color of buttons.
 
-   Make interval numbers a different color or bg color.
-
    CURRENT:
       Trying to reload the dates menu upon deletion of entire day of pics.
 
+   OSError: screen grab failed stopped script.  Handle the error?
 
-"Potential feature list"
+-App needs
+
+   how to start program on startup
+
+
+
+-Potential feature list
 
    - Add option of selecting picture resolutions.  Currently set to balance 
    size and quality
    
    - Add a slideshow mode in gallery
+
+   - Send screenshots to email address?
+
+   - Log when program is turned on and off.
+
+   - Start Script green.
+     Stop Script red.

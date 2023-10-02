@@ -83,6 +83,7 @@ def check_auto_login():
     l_state = cur.fetchone()[0]
     cur.close()
     conn.close()
+    print('login state is ', l_state)
     return l_state
 
 
@@ -356,8 +357,6 @@ def delete_image(time):
                 .format(tab=CRNT_USR), (time,))
     conn.commit()
     cur.close()
-    # Vacuum reduces the size of the database on deletions
-    conn.execute('VACUUM')
     conn.close()
 
 
@@ -372,6 +371,10 @@ def delete_day(day):
     conn.execute('VACUUM')
     conn.close()
 
+def vacuum_db():
+    conn = sqlite3.connect("main.db")
+    conn.execute('VACUUM')
+    conn.close()
 
 def delete_user(name):
 

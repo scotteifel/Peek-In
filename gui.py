@@ -41,8 +41,11 @@ class Application(ttk.Frame):
                                       command=self.create_account_page)
         self.quit = ttk.Button(self.master, text="Exit",
                                command=self.master.destroy)
+        
         self.enter = ttk.Button(self.master, text="Submit",
                                 command=self.check_credentials)
+        # Enter key trigger submit
+        self.master.bind('<Return>', lambda event: self.check_credentials())
 
         self.greet = ttk.Label(
             self.master, text="Welcome", font=("Helvetica", 15))
@@ -68,6 +71,7 @@ class Application(ttk.Frame):
         self.new_account.place(x=33, y=130)
         self.enter.place(x=160, y=130)
         self.quit.place(x=260, y=130)
+
 
     ####   Create Account   ####
     ############################
@@ -377,13 +381,12 @@ class Application(ttk.Frame):
         db_auto_login(name, key)
         set_delay = check_time_delay()
         self.home_window()
-
         # If running, ends current background process before starting.
         if check_script():
             end_script()
             self.started_script()
 
-    def check_credentials(self):
+    def check_credentials(self, event=None):
 
         global set_delay
         global CRNT_USER
@@ -559,7 +562,7 @@ class Application(ttk.Frame):
 
     def delete_day_all(self):
         # Deletes entire days photos
-        # Accessed only in gallery window
+        # Option is only accessible in the gallery window
 
         self.delete_day["state"] = "disabled"
         ok = messagebox.askokcancel(
@@ -659,7 +662,6 @@ class Application(ttk.Frame):
             self.settings_win.withdraw()
         except:
             pass
-        print("Withdrew")
 
     # Generates coordinates for a windows "geometry" method.
     def place_window_center(self, width, height, height_offset=0):
@@ -678,9 +680,10 @@ class Application(ttk.Frame):
         self.home_win.destroy()
         self.master.deiconify()
         self.login_window(CRNT_USER)
+
+        # auto-login to off
         if check_auto_login() == 1:
-            if self.radio_var.get() == 0:
-                self.check_btn.invoke()
+            manage_auto_login(1)
 
         try:
             self.settings_win.destroy()
@@ -694,6 +697,8 @@ class Application(ttk.Frame):
     def close_gallery(self):
         self.clear_gallery()
         self.win.destroy()
+        vacuum_db()
+
 
     # Clears temporary gallery folder of pictures.
     def clear_gallery(self):
@@ -707,11 +712,13 @@ class Application(ttk.Frame):
                 pass
 
     def exit_program(self):
+
         script_off()
         self.clear_gallery()
         print('exit program func')
         # end_process()
         # end_script()
+
         self.master.destroy()
 
 ##########                  ###########
@@ -725,7 +732,6 @@ def end_process():
 
 def end_script():
     print('end script func')
-
 
 
 def main():
