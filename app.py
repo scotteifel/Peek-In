@@ -1,12 +1,13 @@
 import pyscreeze
+import time
 import datetime
-
+import asyncio
 from db_functions import img_to_db
 from settings import PIC_EXT, PREV_PIC
 
 def commence_script():
     global PREV_PIC
-
+    start= time.time()
     now = datetime.datetime.now()
 
     # Remove any 0 before an hour from 1-9
@@ -18,7 +19,6 @@ def commence_script():
     today = now.strftime(r"%m.%d.%y")
 
     initial_pic = "screenshot/current1"+PIC_EXT
-    # img = pyautogui.screenshot(initial_pic)
     img = pyscreeze.screenshot(initial_pic)
     print("Screenshot taken")
 
@@ -28,6 +28,7 @@ def commence_script():
     dimension_y = dimension_x*y_ratio
     img.thumbnail((dimension_x, dimension_y))
     img.save(initial_pic, quality=90)
+
     with open(initial_pic, "rb") as file:
         # If the length of bytes is the same as previous picture,
         # picture will not be saved bc it must be same pic, saves db space.
@@ -37,5 +38,9 @@ def commence_script():
             return
         PREV_PIC = crnt
 
+    # print(start)
+
     img_to_db(current, today, initial_pic)
+
+    # print(start - time.time())
     return today

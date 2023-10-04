@@ -2,6 +2,7 @@ import sqlite3
 import zlib
 import base64
 import os
+import asyncio
 
 from argon2 import PasswordHasher
 from cryptography.hazmat.backends import default_backend
@@ -83,7 +84,6 @@ def check_auto_login():
     l_state = cur.fetchone()[0]
     cur.close()
     conn.close()
-    print('login state is ', l_state)
     return l_state
 
 

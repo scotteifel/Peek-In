@@ -1,7 +1,10 @@
-import os
-
+import os, time
+import datetime
 from pathlib import Path
 from PIL import ImageTk, Image
+import threading
+
+from concurrent.futures import Future
 
 from tkinter import messagebox, PhotoImage
 import tkinter as tk
@@ -23,7 +26,6 @@ class Application(ttk.Frame):
 
         super().__init__(master)
         self.master = master
-        # Start the counter at 0 password entry attempts
         self.password_limiter = 0
         self.clear_gallery()
         self.has_account()
@@ -37,14 +39,13 @@ class Application(ttk.Frame):
         self.master.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
         self.master.resizable(False, False)
 
-        self.new_account = ttk.Button(self.master, text="Create Account",
+        self.new_account = ttk.Button(self.master, takefocus=False, text="Create Account",
                                       command=self.create_account_page)
-        self.quit = ttk.Button(self.master, text="Exit",
+        self.quit = ttk.Button(self.master, takefocus=False, text="Exit",
                                command=self.master.destroy)
         
-        self.enter = ttk.Button(self.master, text="Submit",
+        self.enter = ttk.Button(self.master, takefocus=False, text="Submit",
                                 command=self.check_credentials)
-        # Enter key trigger submit
         self.master.bind('<Return>', lambda event: self.check_credentials())
 
         self.greet = ttk.Label(
@@ -59,7 +60,7 @@ class Application(ttk.Frame):
 
         self.radio_var = tk.IntVar(self.master)
         self.check_btn = ttk.Checkbutton(
-            self.master, text="Auto-login", variable=self.radio_var)
+            self.master, takefocus=False, text="Auto-login", variable=self.radio_var)
 
         self.greet.place(x=160, y=10)
         self.ask_name.place(x=60, y=52)
@@ -88,11 +89,11 @@ class Application(ttk.Frame):
         c = self.place_window_center(WIDTH_HEIGHT[0], WIDTH_HEIGHT[1])
         self.new_user_win.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
 
-        self.submit = ttk.Button(self.new_user_win, text="Submit",
+        self.submit = ttk.Button(self.new_user_win, takefocus=False, text="Submit",
                                  command=self.create_user)
-        self.back_to_login = ttk.Button(self.new_user_win, text="Sign In",
+        self.back_to_login = ttk.Button(self.new_user_win, takefocus=False, text="Sign In",
                                         command=self.to_login_window)
-        self.quit = ttk.Button(self.new_user_win, text="Exit",
+        self.quit = ttk.Button(self.new_user_win, takefocus=False, text="Exit",
                                command=self.master.destroy)
 
         self.name_entry = ttk.Entry(self.new_user_win)
@@ -145,19 +146,24 @@ class Application(ttk.Frame):
             self.select_dates = ttk.OptionMenu(self.home_win, self.variable,
                                                *dates)
 
-        self.image_viewer = ttk.Button(self.home_win, text="View Images",
+        self.image_viewer = ttk.Button(self.home_win, takefocus=False, text="View Images",
                                        command=self.gallery_window)
-        self.start_script = ttk.Button(self.home_win, text="Start",
+
+
+        # self.start_script = ttk.Button(self.home_win, takefocus=False, text="Start",
+        #                                command=self.started_script)
+        self.start_script = ttk.Button(self.home_win, takefocus=False, text="Start",
                                        command=self.started_script)
-        self.stop_script_btn = ttk.Button(self.home_win, text="Stop",
+
+        self.stop_script_btn = ttk.Button(self.home_win, takefocus=False, text="Stop",
                                           command=self.stop_script)
-        self.hide_wins = ttk.Button(self.home_win, text="Hide Window",
+        self.hide_wins = ttk.Button(self.home_win, takefocus=False, text="Hide Window",
                                     command=self.hide)
-        self.settings = ttk.Button(self.home_win, text="Settings",
+        self.settings = ttk.Button(self.home_win, takefocus=False, text="Settings",
                                    command=self.settings_window)
-        self.logout_btn = ttk.Button(self.home_win, text="  Logout  ",
+        self.logout_btn = ttk.Button(self.home_win, takefocus=False, text="  Logout  ",
                                      command=self.logout)
-        self.quit_program = ttk.Button(self.home_win, text="Exit Program",
+        self.quit_program = ttk.Button(self.home_win, takefocus=False, text="Exit Program",
                                        command=self.exit_program)
 
         self.welcome = ttk.Label(self.home_win, text="Peek In",
@@ -202,15 +208,15 @@ class Application(ttk.Frame):
                                      height_offset=15)
         self.settings_win.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
 
-        self.set_delay = ttk.Button(self.settings_win,
+        self.set_delay = ttk.Button(self.settings_win, takefocus=False,
                                     text="Set Timer Delay", command=self.set_timer)
-        self.delete_user = ttk.Button(self.settings_win,
+        self.delete_user = ttk.Button(self.settings_win, takefocus=False,
                                       text="Delete account", command=self.delete_account)
-        self.delete_settings_win = ttk.Button(self.settings_win,
+        self.delete_settings_win = ttk.Button(self.settings_win, takefocus=False,
                                               text="  Close  ", command=self.settings_win.destroy)
 
         self.check_var = tk.IntVar(self.settings_win)
-        self.auto_login_toggle = ttk.Checkbutton(self.settings_win, text="Auto-login", variable=self.check_var,
+        self.auto_login_toggle = ttk.Checkbutton(self.settings_win, takefocus=False, text="Auto-login", variable=self.check_var,
                                                  command=self.switch_auto_login)
 
         self.enter_timer_delay = ttk.Entry(self.settings_win, width=5)
@@ -264,17 +270,17 @@ class Application(ttk.Frame):
                 pic_timestamps = [line.strip() for line in file]
                 pic_timestamps = sort_times(pic_timestamps)
 
-            self.next = ttk.Button(self.win, text="Next",
+            self.next = ttk.Button(self.win, takefocus=False, text="Next",
                                    command=self.next_pic)
-            self.previous = ttk.Button(self.win, text="Previous",
+            self.previous = ttk.Button(self.win, takefocus=False, text="Previous",
                                        command=self.previous_pic)
-            self.save_im = ttk.Button(self.win, text="Save To Desktop",
+            self.save_im = ttk.Button(self.win, takefocus=False, text="Save To Desktop",
                                       command=self.save_img)
-            self.delete_btn = ttk.Button(self.win, text="Delete Image",
+            self.delete_btn = ttk.Button(self.win, takefocus=False, text="Delete Image",
                                          command=self.delete_im)
-            self.delete_day = ttk.Button(self.win, text="Delete All",
+            self.delete_day = ttk.Button(self.win, takefocus=False, text="Delete All",
                                          command=self.delete_day_all)
-            self.back_button = ttk.Button(self.win, text="Close",
+            self.back_button = ttk.Button(self.win, takefocus=False, text="Close",
                                           command=self.close_gallery)
 
             self.timestamp = ttk.Label(self.win)
@@ -376,15 +382,9 @@ class Application(ttk.Frame):
 
         CRNT_USER = name
 
-        end_script()
-
         db_auto_login(name, key)
         set_delay = check_time_delay()
         self.home_window()
-        # If running, ends current background process before starting.
-        if check_script():
-            end_script()
-            self.started_script()
 
     def check_credentials(self, event=None):
 
@@ -422,11 +422,6 @@ class Application(ttk.Frame):
         elif check_auto_login() == 1:
             manage_auto_login(1)
 
-        # If running, ends current background process before starting.
-        if check_script():
-            end_script()
-            self.started_script()
-
     def too_many_guesses(self):
 
         if self.password_limiter == 6:
@@ -448,12 +443,12 @@ class Application(ttk.Frame):
             messagebox.askokcancel(message="Passwords do not match.")
             return
 
-        if self.name_entry.get()[0].isnumeric():
+        if not self.name_entry.get()[0].isalpha():
             messagebox.askokcancel(
                 message="Username must start with a letter.")
             return
 
-        name = self.name_entry.get()
+        name = self.name_entry.get().lower()
         passw = self.pass_entry.get()
         CRNT_USER = name
 
@@ -590,14 +585,16 @@ class Application(ttk.Frame):
 
         messagebox.askokcancel(message="{s} successfully removed from database.\n{x}Program will now close"
                                .format(s=CRNT_USER, x=" "*15))
-        # end_process()
         self.destroy()
-        # end_script()
 
 
     def started_script(self):
         global routine
 
+        # start= time.time()
+        # print(start)
+        # print(start - time.time())
+        
         # Try/except so when script is already running and started again
         # current script stops to prevent multiple instances.
         try:
@@ -607,17 +604,36 @@ class Application(ttk.Frame):
         else:
             self.after_cancel(routine)
 
-        today = commence_script()
+        today = threading.Thread(target=commence_script).start()
+        
         self.update_dates_menu()
 
         if self.variable.get() == "---":
             self.variable.set(today)
 
-        # Renames title to enable subprocess to identify it.
-        self.home_win.title("{user} Peek In (running)".format(user=CRNT_USER))
+        self.home_win.title("Peek In - Running ")
 
         routine = self.after(set_delay * 1000, self.started_script)
         return routine
+
+    def set_timer(self):
+        global set_delay
+        try:
+            int(self.enter_timer_delay.get())
+            set_delay = int(self.enter_timer_delay.get())
+            if len(str(set_delay)) > 4:
+                messagebox.askokcancel(
+                message="The timer's interval must be less than 5 digits long.")
+                self.enter_timer_delay.delete(0, tk.END)
+            elif len(str(set_delay)) < 1:
+                messagebox.askokcancel(
+                message="The timer's interval must be over 1 second.")
+            set_delay_time(set_delay)
+            self.timer["text"] = 'Timer set to {amount} second{s}'.format(
+                amount=set_delay, s="s" if set_delay != 1 else "")
+        except:
+            self.enter_timer_delay.delete(0, tk.END)
+
 
     def stop_script(self):
         self.home_win.title("Peek In")
@@ -627,16 +643,6 @@ class Application(ttk.Frame):
             pass
         script_off()
 
-    def set_timer(self):
-        global set_delay
-        try:
-            int(self.enter_timer_delay.get())
-            set_delay = int(self.enter_timer_delay.get())
-            set_delay_time(set_delay)
-            self.timer["text"] = 'Timer set to {amount} second{s}'.format(
-                amount=set_delay, s="s" if set_delay != 1 else "")
-        except:
-            self.enter_timer_delay.delete(0, tk.END)
 
     def update_dates_menu(self):
         menu = self.select_dates["menu"]
@@ -697,7 +703,7 @@ class Application(ttk.Frame):
     def close_gallery(self):
         self.clear_gallery()
         self.win.destroy()
-        vacuum_db()
+        threading.Thread(target=vacuum_db).start()
 
 
     # Clears temporary gallery folder of pictures.
@@ -715,23 +721,11 @@ class Application(ttk.Frame):
 
         script_off()
         self.clear_gallery()
-        print('exit program func')
-        # end_process()
-        # end_script()
-
         self.master.destroy()
 
 ##########                  ###########
 #####  End of Application Class  ######
 ##########                  ###########
-
-
-def end_process():
-    print('end process func')
-
-
-def end_script():
-    print('end script func')
 
 
 def main():
@@ -744,7 +738,6 @@ def main():
     app = Application(master=root)
     app.mainloop()
 
-
 if __name__ == '__main__':
-    # end_process()
+
     main()

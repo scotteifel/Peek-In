@@ -1,12 +1,5 @@
 -Fixes
 
-   make user name str()?
-
-   Make sure proper value is entered for timer delay.
-
-   - Note:
-      Apparently ttkthemes does not support easily changing the background
-      color of buttons.
 
    CURRENT:
       Trying to reload the dates menu upon deletion of entire day of pics.
@@ -16,7 +9,6 @@
 -App needs
 
    how to start program on startup
-
 
 
 -Potential feature list
