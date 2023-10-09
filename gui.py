@@ -203,7 +203,7 @@ class Application(ttk.Frame):
         self.settings_win = tk.Toplevel(self.master)
         self.settings_win.resizable(False, False)
 
-        WIDTH_HEIGHT = 300, 180
+        WIDTH_HEIGHT = 300, 270
         c = self.place_window_center(WIDTH_HEIGHT[0], WIDTH_HEIGHT[1],
                                      height_offset=15)
         self.settings_win.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
@@ -225,18 +225,27 @@ class Application(ttk.Frame):
         # Start the cursor on the time delay box
         self.enter_timer_delay.focus()
 
-        self.setting_label = ttk.Label(self.settings_win, text="Settings",
-                                       font=("Helvetica", 10))
+        self.setting_label = ttk.Label(self.settings_win, text="Settings", font=("Helvetica", 14))
+
+        self.delay_label = ttk.Label(self.settings_win, text="Screenshot's delay in minutes.", font=("Helvetica", 11))
+
+        self.auto_login_label = ttk.Label(self.settings_win, text="Set auto-login state", font=("Helvetica", 11))
+
 
         if check_auto_login() == 1:
             self.auto_login_toggle.invoke()
 
         self.setting_label.place(x=120, y=12)
-        self.set_delay.place(x=76, y=40)
-        self.enter_timer_delay.place(x=184, y=42)
-        self.auto_login_toggle.place(x=87, y=77)
-        self.delete_user.place(x=60, y=111)
-        self.delete_settings_win.place(x=170, y=111)
+        
+        self.delay_label.place(x=50, y=50)
+        self.set_delay.place(x=76, y=75)
+        self.enter_timer_delay.place(x=184, y=78)
+
+        self.auto_login_label.place(x=90, y=125)
+        self.auto_login_toggle.place(x=115, y=149)
+
+        self.delete_user.place(x=60, y=200)
+        self.delete_settings_win.place(x=170, y=200)
 
     ####   Gallery Window   ####
     ############################

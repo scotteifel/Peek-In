@@ -1,7 +1,6 @@
 import pyscreeze
 import time
 import datetime
-import asyncio
 from db_functions import img_to_db
 from settings import PIC_EXT, PREV_PIC
 
@@ -31,16 +30,12 @@ def commence_script():
 
     with open(initial_pic, "rb") as file:
         # If the length of bytes is the same as previous picture,
-        # picture will not be saved bc it must be same pic, saves db space.
+        # picture will not be saved bc guess is it's the same pic, saves db space.
         crnt = len(file.read())
         if PREV_PIC == crnt:
             print("Same Screenshot")
             return
         PREV_PIC = crnt
 
-    # print(start)
-
     img_to_db(current, today, initial_pic)
-
-    # print(start - time.time())
     return today
