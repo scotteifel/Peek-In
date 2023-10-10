@@ -4,8 +4,6 @@ from pathlib import Path
 from PIL import ImageTk, Image
 import threading
 
-from concurrent.futures import Future
-
 from tkinter import messagebox, PhotoImage
 import tkinter as tk
 
@@ -13,7 +11,7 @@ import tkinter as tk
 from tkinter import ttk
 from ttkthemes import ThemedTk
 
-from app import commence_script
+from app import take_screenshot
 from utils import sort_gallery, sort_times
 from create_db import create_database
 from db_functions import *
@@ -149,14 +147,11 @@ class Application(ttk.Frame):
         self.image_viewer = ttk.Button(self.home_win, takefocus=False, text="View Images",
                                        command=self.gallery_window)
 
-
-        # self.start_script = ttk.Button(self.home_win, takefocus=False, text="Start",
-        #                                command=self.started_script)
         self.start_script = ttk.Button(self.home_win, takefocus=False, text="Start",
-                                       command=self.started_script)
-
-        self.stop_script_btn = ttk.Button(self.home_win, takefocus=False, text="Stop",
-                                          command=self.stop_script)
+                                       command=self.start_screenshots)
+        
+        self.stop_screenshots_btn = ttk.Button(self.home_win, takefocus=False, text="Stop",
+                                          command=self.stop_screenshots)
         self.hide_wins = ttk.Button(self.home_win, takefocus=False, text="Hide Window",
                                     command=self.hide)
         self.settings = ttk.Button(self.home_win, takefocus=False, text="Settings",
@@ -181,7 +176,7 @@ class Application(ttk.Frame):
         self.timer.place(x=107, y=110)
 
         self.start_script.place(x=95, y=140)
-        self.stop_script_btn.place(x=190, y=140)
+        self.stop_screenshots_btn.place(x=190, y=140)
 
         self.hide_wins.place(x=89, y=185)
         self.settings.place(x=195, y=185)
@@ -203,16 +198,16 @@ class Application(ttk.Frame):
         self.settings_win = tk.Toplevel(self.master)
         self.settings_win.resizable(False, False)
 
-        WIDTH_HEIGHT = 300, 270
+        WIDTH_HEIGHT = 300, 280
         c = self.place_window_center(WIDTH_HEIGHT[0], WIDTH_HEIGHT[1],
                                      height_offset=15)
         self.settings_win.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
 
         self.set_delay = ttk.Button(self.settings_win, takefocus=False,
-                                    text="Set Timer Delay", command=self.set_timer)
+                                    text="Set delay", command=self.set_timer)
         self.delete_user = ttk.Button(self.settings_win, takefocus=False,
                                       text="Delete account", command=self.delete_account)
-        self.delete_settings_win = ttk.Button(self.settings_win, takefocus=False,
+        self.close_settings = ttk.Button(self.settings_win, takefocus=False,
                                               text="  Close  ", command=self.settings_win.destroy)
 
         self.check_var = tk.IntVar(self.settings_win)
@@ -227,10 +222,9 @@ class Application(ttk.Frame):
 
         self.setting_label = ttk.Label(self.settings_win, text="Settings", font=("Helvetica", 14))
 
-        self.delay_label = ttk.Label(self.settings_win, text="Screenshot's delay in minutes.", font=("Helvetica", 11))
+        self.delay_label = ttk.Label(self.settings_win, text="Screenshot's delay in seconds.", font=("Helvetica", 11))
 
         self.auto_login_label = ttk.Label(self.settings_win, text="Set auto-login state", font=("Helvetica", 11))
-
 
         if check_auto_login() == 1:
             self.auto_login_toggle.invoke()
@@ -238,14 +232,14 @@ class Application(ttk.Frame):
         self.setting_label.place(x=120, y=12)
         
         self.delay_label.place(x=50, y=50)
-        self.set_delay.place(x=76, y=75)
-        self.enter_timer_delay.place(x=184, y=78)
+        self.set_delay.place(x=81, y=81)
+        self.enter_timer_delay.place(x=177, y=83)
 
         self.auto_login_label.place(x=90, y=125)
         self.auto_login_toggle.place(x=115, y=149)
 
-        self.delete_user.place(x=60, y=200)
-        self.delete_settings_win.place(x=170, y=200)
+        self.delete_user.place(x=106, y=183)
+        self.close_settings.place(x=117, y=225)
 
     ####   Gallery Window   ####
     ############################
@@ -285,7 +279,7 @@ class Application(ttk.Frame):
                                        command=self.previous_pic)
             self.save_im = ttk.Button(self.win, takefocus=False, text="Save To Desktop",
                                       command=self.save_img)
-            self.delete_btn = ttk.Button(self.win, takefocus=False, text="Delete Image",
+            self.del_one_img = ttk.Button(self.win, takefocus=False, text="Delete Image",
                                          command=self.delete_im)
             self.delete_day = ttk.Button(self.win, takefocus=False, text="Delete All",
                                          command=self.delete_day_all)
@@ -325,7 +319,7 @@ class Application(ttk.Frame):
                 self.next.place(x=centr+80, y=pic_h+15)
 
                 self.save_im.place(x=centr-143, y=pic_h+47)
-                self.delete_btn.place(x=centr-25, y=pic_h+47)
+                self.del_one_img.place(x=centr-25, y=pic_h+47)
                 self.delete_day.place(x=centr+75, y=pic_h+47)
 
                 self.back_button.place(x=centr-20, y=pic_h+78)
@@ -345,7 +339,7 @@ class Application(ttk.Frame):
                 self.next.place(x=centr+22, y=pic_h+53)
 
                 self.save_im.place(x=centr-143, y=pic_h+85)
-                self.delete_btn.place(x=centr-27, y=pic_h+85)
+                self.del_one_img.place(x=centr-27, y=pic_h+85)
                 self.delete_day.place(x=centr+71, y=pic_h+85)
 
                 self.back_button.place(x=centr-23, y=pic_h+122)
@@ -576,9 +570,11 @@ class Application(ttk.Frame):
         if not ok:
             return
 
+
+        # threading.Thread(delete_day(self.variable.get())).start()
         delete_day(self.variable.get())
-        self.close_gallery()
         self.update_dates_menu()
+        self.close_gallery()
 
     def delete_account(self):
         self.delete_user["state"] = "disabled"
@@ -596,14 +592,24 @@ class Application(ttk.Frame):
                                .format(s=CRNT_USER, x=" "*15))
         self.destroy()
 
+    def calc_date(self):
+        now = datetime.datetime.now()
 
-    def started_script(self):
+        # Remove any 0 before an hour from 1-9
+        formatted_hour = now.strftime("%I")
+        if formatted_hour[0] == '0':
+            formatted_hour = formatted_hour[1]
+
+        the_time = now.strftime(formatted_hour + ":%M:%S %p")
+        the_date = now.strftime(r"%m.%d.%y")
+        return the_date, the_time
+
+
+    def start_screenshots(self):
         global routine
 
-        # start= time.time()
-        # print(start)
-        # print(start - time.time())
-        
+        the_date,the_time = self.calc_date()
+
         # Try/except so when script is already running and started again
         # current script stops to prevent multiple instances.
         try:
@@ -613,16 +619,15 @@ class Application(ttk.Frame):
         else:
             self.after_cancel(routine)
 
-        today = threading.Thread(target=commence_script).start()
-        
-        self.update_dates_menu()
+        threading.Thread(target = take_screenshot(the_date,the_time)).start()
 
         if self.variable.get() == "---":
-            self.variable.set(today)
+            self.variable.set(the_date)
 
         self.home_win.title("Peek In - Running ")
 
-        routine = self.after(set_delay * 1000, self.started_script)
+        routine = self.after(set_delay * 1000, self.start_screenshots)
+        self.update_dates_menu()
         return routine
 
     def set_timer(self):
@@ -643,17 +648,15 @@ class Application(ttk.Frame):
         except:
             self.enter_timer_delay.delete(0, tk.END)
 
-
-    def stop_script(self):
+    def stop_screenshots(self):
         self.home_win.title("Peek In")
         try:
             self.after_cancel(routine)
         except:
             pass
-        script_off()
-
 
     def update_dates_menu(self):
+        print('ran')
         menu = self.select_dates["menu"]
         menu.delete(0, tk.END)
         dates = fetch_dates()
@@ -662,6 +665,7 @@ class Application(ttk.Frame):
             for item in dates:
                 menu.add_command(label=item, command=lambda value=item:
                                  self.variable.set(value))
+            self.variable.set(dates[-1])
             return
         self.variable.set("---")
 
@@ -691,7 +695,7 @@ class Application(ttk.Frame):
 
     def logout(self):
 
-        self.stop_script()
+        self.stop_screenshots()
         self.home_win.destroy()
         self.master.deiconify()
         self.login_window(CRNT_USER)
@@ -727,8 +731,6 @@ class Application(ttk.Frame):
                 pass
 
     def exit_program(self):
-
-        script_off()
         self.clear_gallery()
         self.master.destroy()
 
@@ -747,6 +749,7 @@ def main():
     app = Application(master=root)
     app.mainloop()
 
+one = 1
 if __name__ == '__main__':
 
     main()

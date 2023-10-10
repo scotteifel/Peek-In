@@ -1,10 +1,7 @@
 -Fixes
 
-
-   CURRENT:
-      Trying to reload the dates menu upon deletion of entire day of pics.
-
    OSError: screen grab failed stopped script.  Handle the error?
+
 
 -App needs
 

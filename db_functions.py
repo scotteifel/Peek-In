@@ -368,7 +368,6 @@ def delete_day(day):
                 .format(tab=CRNT_USR), (day,))
     conn.commit()
     cur.close()
-    conn.execute('VACUUM')
     conn.close()
 
 def vacuum_db():

@@ -1,21 +1,20 @@
 import pyscreeze
 import time
-import datetime
 from db_functions import img_to_db
 from settings import PIC_EXT, PREV_PIC
 
-def commence_script():
+def take_screenshot(the_date,the_time):
     global PREV_PIC
     start= time.time()
-    now = datetime.datetime.now()
+    # now = datetime.datetime.now()
 
-    # Remove any 0 before an hour from 1-9
-    formatted_hour = now.strftime("%I")
-    if formatted_hour[0] == '0':
-        formatted_hour = formatted_hour[1]
+    # # Remove any 0 before an hour from 1-9
+    # formatted_hour = now.strftime("%I")
+    # if formatted_hour[0] == '0':
+    #     formatted_hour = formatted_hour[1]
 
-    current = now.strftime(formatted_hour + ":%M:%S %p")
-    today = now.strftime(r"%m.%d.%y")
+    # current = now.strftime(formatted_hour + ":%M:%S %p")
+    # today = now.strftime(r"%m.%d.%y")
 
     initial_pic = "screenshot/current1"+PIC_EXT
     img = pyscreeze.screenshot(initial_pic)
@@ -37,5 +36,4 @@ def commence_script():
             return
         PREV_PIC = crnt
 
-    img_to_db(current, today, initial_pic)
-    return today
+    img_to_db(the_time, the_date, initial_pic)
