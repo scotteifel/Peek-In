@@ -18,7 +18,6 @@ def take_screenshot(the_date,the_time):
 
     initial_pic = "screenshot/current1"+PIC_EXT
     img = pyscreeze.screenshot(initial_pic)
-    print("Screenshot taken")
 
     # Resize the fullscreen screenshot
     y_ratio = img.size[1]/img.size[0]

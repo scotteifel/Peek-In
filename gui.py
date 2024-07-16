@@ -17,7 +17,6 @@ from create_db import create_database
 from db_functions import *
 from settings import *
 
-
 class Application(ttk.Frame):
 
     def __init__(self, master=None):
@@ -32,7 +31,7 @@ class Application(ttk.Frame):
     ##########################
 
     def login_window(self, name):
-        WIDTH_HEIGHT = 380, 180
+        WIDTH_HEIGHT = 380, 200
         c = self.place_window_center(WIDTH_HEIGHT[0], WIDTH_HEIGHT[1])
         self.master.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
         self.master.resizable(False, False)
@@ -62,14 +61,14 @@ class Application(ttk.Frame):
 
         self.greet.place(x=160, y=10)
         self.ask_name.place(x=60, y=52)
-        self.enter_name.place(x=150, y=50)
+        self.enter_name.place(x=170, y=50)
         self.ask_pass.place(x=62, y=82)
-        self.enter_pass.place(x=149, y=80)
-        self.check_btn.place(x=148, y=105)
+        self.enter_pass.place(x=170, y=80)
+        self.check_btn.place(x=148, y=111)
 
-        self.new_account.place(x=33, y=130)
-        self.enter.place(x=160, y=130)
-        self.quit.place(x=260, y=130)
+        self.new_account.place(x=33, y=145)
+        self.enter.place(x=160, y=145)
+        self.quit.place(x=260, y=145)
 
 
     ####   Create Account   ####
@@ -83,7 +82,7 @@ class Application(ttk.Frame):
         self.new_user_win.protocol('WM_DELETE_WINDOW', self.destroy)
         self.new_user_win.resizable(False, False)
 
-        WIDTH_HEIGHT = 350, 200
+        WIDTH_HEIGHT = 400, 200
         c = self.place_window_center(WIDTH_HEIGHT[0], WIDTH_HEIGHT[1])
         self.new_user_win.geometry("%dx%d+%d+%d" % (c[0], c[1], c[2], c[3]))
 
@@ -108,17 +107,17 @@ class Application(ttk.Frame):
 
         self.info.place(x=85, y=8)
         self.name_label.place(x=59, y=50)
-        self.name_entry.place(x=145, y=48)
+        self.name_entry.place(x=195, y=48)
 
         self.pass_label.place(x=61, y=80)
-        self.pass_entry.place(x=145, y=77)
+        self.pass_entry.place(x=195, y=77)
 
         self.confirm_label.place(x=45, y=110)
-        self.confirm_entry.place(x=145, y=106)
+        self.confirm_entry.place(x=195, y=106)
 
-        self.back_to_login.place(x=30, y=145)
-        self.submit.place(x=128, y=145)
-        self.quit.place(x=228, y=145)
+        self.back_to_login.place(x=60, y=145)
+        self.submit.place(x=158, y=145)
+        self.quit.place(x=258, y=145)
 
     ####  Home Window   ####
     ########################
@@ -749,7 +748,7 @@ def main():
     app = Application(master=root)
     app.mainloop()
 
-one = 1
+
 if __name__ == '__main__':
 
     main()
