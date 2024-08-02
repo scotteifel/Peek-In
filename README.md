@@ -12,12 +12,11 @@ Peek In is a Python application that automates the process of taking screenshots
 ## Installation
 1. Install Python 3.x on your system if you haven't already.
 2. Fork the repo.
-3. Open a terminal or command prompt and navigate to the extracted folder.
+3. Open a terminal or command prompt and navigate to the folder.
 4. Install the required dependencies.  Using a virtual environment is recommended.
 
 ## Usage
 1. Run the application by executing the following command: gui.py
-
 2. A graphical user interface (GUI) will appear, allowing you to sign in, manage screenshots, and view them in a gallery.
 
 ## Features
