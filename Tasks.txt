@@ -2,6 +2,8 @@
 
    OSError: screen grab failed stopped script.  Handle the error?
 
+   Make it so when the window is hidden, to view it again you need to enter
+   the password.
 
 -App needs
 
@@ -21,3 +23,6 @@
 
    - Start Script green.
      Stop Script red.
+
+
+if i am writing and it takes a screenshot, does it take the focus off of what i am writing?  so far it seems to not do that which is good.  
