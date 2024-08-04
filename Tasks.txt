@@ -5,6 +5,10 @@
    Make it so when the window is hidden, to view it again you need to enter
    the password.
 
+   Set delay only updates after a screenshot.
+
+   Sort needs to work for the years.
+
 -App needs
 
    how to start program on startup

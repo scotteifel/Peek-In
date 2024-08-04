@@ -127,7 +127,8 @@ class Application(ttk.Frame):
 
         self.home_win = tk.Toplevel(self.master)
         self.home_win.title("Peek In")
-        self.home_win.protocol('WM_DELETE_WINDOW', self.hide)
+        # self.home_win.protocol('WM_DELETE_WINDOW', self.hide)
+        self.home_win.protocol("WM_DELETE_WINDOW", self.exit_program)
         self.home_win.resizable(False, False)
         WIDTH_HEIGHT = 367, 300
         c = self.place_window_center(WIDTH_HEIGHT[0], WIDTH_HEIGHT[1])
@@ -655,7 +656,6 @@ class Application(ttk.Frame):
             pass
 
     def update_dates_menu(self):
-        print('ran')
         menu = self.select_dates["menu"]
         menu.delete(0, tk.END)
         dates = fetch_dates()
@@ -666,6 +666,7 @@ class Application(ttk.Frame):
                                  self.variable.set(value))
             self.variable.set(dates[-1])
             return
+        
         self.variable.set("---")
 
     def hide(self):

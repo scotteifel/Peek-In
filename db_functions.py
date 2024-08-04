@@ -165,8 +165,8 @@ def validate_login(name, pasw):
     CRNT_USR = name_info[0]
     CRNT_USR_INF = CRNT_USR + "_info"
 
-    cur.execute('''SELECT password FROM {tab} WHERE username = (?)'''
-                .format(tab=name), (name,))
+    cur.execute('''SELECT password FROM {x} WHERE username = (?)'''
+                .format(x=name), (name,))
     passw_info = cur.fetchone()[0]
 
     try:
@@ -202,8 +202,8 @@ def img_to_db(current, date, initial_pic):
 
     conn = sqlite3.connect("main.db")
     cur = conn.cursor()
-    cur.execute('''INSERT INTO {tab} (picture,day,data) VALUES (?,?,?)'''
-                .format(tab=CRNT_USR), (current, date, data))
+    cur.execute('''INSERT INTO {x} (picture,day,data) VALUES (?,?,?)'''
+                .format(x=CRNT_USR), (current, date, data))
     conn.commit()
     cur.execute('''UPDATE {info} SET script_state = 1'''
                 .format(info=CRNT_USR_INF))
@@ -221,8 +221,8 @@ def retrieve_image(day):
     cur = conn.cursor()
 
     temp_path = 'gallery/'
-    qry = cur.execute('''SELECT data, picture FROM {tab} WHERE day=?'''
-                      .format(tab=CRNT_USR), (day,))
+    qry = cur.execute('''SELECT data, picture FROM {x} WHERE day=?'''
+                      .format(x=CRNT_USR), (day,))
 
     info = qry.fetchall()
 
