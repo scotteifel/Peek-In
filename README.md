@@ -27,3 +27,7 @@ Peek In is a Python application that automates the process of taking screenshots
 - Delete screenshots from the gallery.
 - Delete all screenshots for a specific date.
 - Set auto-login state for a seamless login experience.
+
+## Note
+- When the "Hide Window" button is clicked, the program is hidden, but still running.  It must be closed by 
+  exiting it in the terminal when this is the case currently.
